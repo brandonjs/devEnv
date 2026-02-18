@@ -41,9 +41,11 @@ alias hideFiles='defaults write com.apple.finder AppleShowAllFiles NO; killall F
 #alias recr='~/.toolbox/bin/cr'
 #alias realcr='~/.toolbox/bin/cr'
 
-alias python27="~/.pyenv/versions/$(pyenv whence python2.7)/bin/python"
-alias python38="~/.pyenv/versions/$(pyenv whence python3.8)/bin/python3"
-alias python39="~/.pyenv/versions/$(pyenv whence python3.9)/bin/python3"
+if [[ -n $(which pyenv) ]]; then
+  alias python27="~/.pyenv/versions/$(pyenv whence python2.7)/bin/python"
+  alias python38="~/.pyenv/versions/$(pyenv whence python3.8)/bin/python3"
+  alias python39="~/.pyenv/versions/$(pyenv whence python3.9)/bin/python3"
+fi
 
 alias dockercleanup='docker rmi $(docker images -q)'
 

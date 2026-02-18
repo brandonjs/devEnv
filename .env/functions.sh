@@ -38,17 +38,7 @@ function iterm2_print_user_vars () {
     fi
    	iterm2_set_user_var gitDiff $(is_git_branch_dirty)
    	iterm2_set_user_var humpDay $(is_it_wednesday)
-	iterm2_set_user_var badge $(dir_badges)
-}
-
-function dir_badges() {
-	while read directory badge || [[ -n "$directory" ]]
-    do
-        if [[ "$PWD" == $directory* ]]; then
-            echo $badge
-            break
-        fi
-    done < ~/.badges
+	  iterm2_set_user_var badge "$(basename "$PWD")"
 }
 
 function is_it_wednesday {

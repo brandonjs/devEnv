@@ -1,8 +1,8 @@
 " local syntax file - set colors on a per-machine basis:
 " vim: tw=0 ts=4 sw=4
 " Vim color file
-" Maintainer:	Ron Aaron <ron@ronware.org>
-" Last Change:	2003 May 02
+" Maintainer:	Ron Aaron <ron@mossbayeng.com>
+" Last Change:	2001 Jul 28
 
 set background=dark
 hi clear
@@ -10,7 +10,7 @@ if exists("syntax_on")
   syntax reset
 endif
 let g:colors_name = "elflord"
-hi Normal		ctermbg=Black	guifg=cyan			guibg=black
+hi Normal		guifg=cyan			guibg=black
 hi Comment	term=bold		ctermfg=DarkCyan		guifg=#80a0ff
 hi Constant	term=underline	ctermfg=Magenta		guifg=Magenta
 hi Special	term=bold		ctermfg=DarkMagenta	guifg=Red

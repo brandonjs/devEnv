@@ -5,9 +5,10 @@ set autolist
 unset noclobber
 set -o vi
 
+shopt -s extglob
+
 export SHELL_TYPE="Bourne"
 export HOST=`hostname`
-export BREW_DIR=$(brew --prefix)
 
 # Source global definitions
 if [ -f /etc/bashrc ]; then

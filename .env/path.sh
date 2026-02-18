@@ -1,9 +1,7 @@
 UNAME=`uname`
 
-export PATH=/opt/local/bin:/opt/local/sbin:$PATH
-#export PATH=$(pyenv root)/shims:/opt/homebrew/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/sbin:/usr/sbin:/opt/local/bin:/opt/local/sbin:$PATH
-export PATH=$(pyenv root)/shims:/bin:/usr/bin:/usr/local/sbin:/sbin:/usr/sbin:/opt/local/bin:/opt/local/sbin:$PATH
-[ -d ~/.rbenv/shims ] && export PATH=$PATH:~/.rbenv/shims
+export PATH=/bin:/usr/bin:/usr/local/sbin:/sbin:/usr/sbin:/opt/local/bin:/opt/local/sbin:$PATH
+#[ -d ~/.rbenv/shims ] && export PATH=$PATH:~/.rbenv/shims
 
 export EDITOR=vi
 export PRUNEFS="afs auto autofs cifs devfs devpts eventpollfs futexfs hugetlbfs iso9660 mqueue ncpfs nfs NFS nfs4 nfsd nnpfs pipefs proc ramfs rpc_pipefs sfs shfs smbfs sockfs subfs supermount sysfs tmpfs udf usbfs vperfctrfs"

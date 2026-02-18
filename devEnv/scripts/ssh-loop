@@ -1,0 +1,21 @@
+#!/bin/bash
+
+usage() { echo "Usage: $0 [-c <command(s) to run>] [-h <hostlist>]" 1>&2; exit 1; }
+
+pass=$(security find-generic-password -gs Exchange 2>&1 | awk 'BEGIN{FS="\042"} /password/ {print $2}')
+
+while getopts ":h:c:" o; do
+    case "${o}" in
+        h)
+            h=${OPTARG} ;;
+        c)
+            c=${OPTARG} ;;
+        *)
+            usage ;;
+    esac
+done
+shift $(( OPTIND - 1 ))
+
+for host in $h; do
+   ssh -o "StrictHostKeyChecking no" -t $host "echo $pass | sudo -S $c"
+done

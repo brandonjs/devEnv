@@ -1,0 +1,15 @@
+#!/pkg/qct/bin/perl
+
+my $start_subnet 	= "10.4.128";
+my $start_hostnumber 	= "82";
+
+while (<>){
+    my ($newhost,$oldhost) = split (" ",$_);
+#    print "$newhost, $oldhost\n";
+	print "delete domain $oldhost.qualcomm.com.;\n";
+	my ($ip) = `host $oldhost | awk '{print \$3}'`;
+	chomp ($ip);
+	print "delete host $ip;\n";
+	print "add host $start_subnet.$start_hostnumber fqdn $newhost.qualcomm.com.;\n";
+	$start_hostnumber++;
+}

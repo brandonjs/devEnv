@@ -1,0 +1,22 @@
+#!/bin/bash
+
+consensus_review_id="93fc2179-c448-46f2-b7ba-4f26cb3f2ac9"
+#aws --profile bsschwar ssm start-automation-execution --document-name "dmesg" --document-version "\$DEFAULT" --parameters '{"BarristerCCSRegion":["us-east-1"],"BarristerConsensusReviewID":["'${consensus_review_id}'"],"BarristerCreateReview":["No"],"BarristerResourceName":["DEV-DSK-BSSCHWAR"],"BarristerResourceType":["hostclass"],"status":["Active"],"environment":["Test Environment"],"InstanceIds":["mi-09e915b20aaa5cc0c", "i-0e1f80c85bdf29de7"]}' --region us-east-1 --parameters AutomationAssumeRole=arn:aws:iam::Automation_management_account_ID:role/AWS-SystemsManager-AutomationAdministrationRole 
+
+#aws --profile bsschwar ssm start-automation-execution   --document-name dmesg --parameters '{"BarristerCCSRegion": ["us-east-1"], "BarristerSIMTTID": ["ASIT-130"], "BarristerRiskClass": ["LOW"], "BarristerConsensusReviewID": ["'${consensus_review_id}'"], "BarristerResources": ["{\"name\": \"DEV-DSK-BSSCHWAR\", \"type\": \"hostclass\"}"], "AutomationAssumeRole": ["arn:aws:iam::971593487406:role/VariaSsmExecutorRole"], "Targets": ["{\"Key\": \"tag:Hostclass\", \"Values\": [\"DEV-DSK-BSSCHWAR\", \"VARIA-TEAM-HOSTCLASS\"]}"]}'   --document-version "\$DEFAULT"   --region us-east-1
+
+
+
+#for region in us-east-1 us-west-1 us-east-2 us-west-2; do
+for region in us-east-1; do
+  for document in Varia-dmesg Varia-sysinfo; do
+  aws --profile bsschwar ssm start-automation-execution   --document-name ${document} --parameters '{"BarristerCCSRegion": ["us-east-1"], "BarristerSIMTTID": ["ASIT-130"], "BarristerConsensusReviewID": ["'${consensus_review_id}'"], "BarristerResources": ["{\"name\": \"DEV-DSK-BSSCHWAR\", \"type\": \"hostclass\"}"], "Targets": ["{\"Key\": \"tag:Hostclass\", \"Values\": [\"DEV-DSK-BSSCHWAR\", \"CHOZO-TEST-HOSTCLASS\"]}"]}'   --document-version "\$DEFAULT"   --region ${region}
+  done
+done
+
+
+#aws ssm start-automation-execution   --document-name dmesg --parameters '{"BarristerCCSRegion": ["us-east-1"], "BarristerConsensusReviewID": ["'${consensus_review_id}'"], "BarristerResources": ["{\"name\": \"DEV-DSK-BSSCHWAR\", \"type\": \"hostclass\"}"], "AutomationAssumeRole": ["arn:aws:iam::971593487406:role/VariaSsmExecutorRole"], "Targets": ["{\"Key\": \"tag:Hostclass\", \"Values\": [\"DEV-DSK-BSSCHWAR\", \"VARIA-TEAM-HOSTCLASS\"]}"]}'   --document-version "\$DEFAULT"   --region us-east-1
+
+#aws --profile bsschwar ssm start-automation-execution --document-name "Varia-dmesg" --document-version "\$DEFAULT" --parameters '{"Targets": [{}], "BarristerCCSRegion":["us-east-1"],"BarristerConsensusReviewID":["7d409c8e-7165-4920-8b04-0b7e74c30330"],"BarristerMCMID":[""],"BarristerSIMTTID":[""],"BarristerTeamAlias":[""],"BarristerResources":["{}"],"BarristerRiskClass":["LOW"],"OverrideBarrister":["false"]}' --target-parameter-name Targets --targets '[{"Key":"AWS::EC2::Instance","Values":["*"]}]' --max-errors "100%" --max-concurrency "100%" --region us-east-1
+
+

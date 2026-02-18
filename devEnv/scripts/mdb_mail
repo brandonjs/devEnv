@@ -1,0 +1,12 @@
+#!/bin/bash -xv
+
+echo "Mdbupdate running at `date` for CRAC-SEC"
+
+cd /prj/appl/Qualcomm/MDB
+
+#for file in *s[0-1][0-9]-[0-1][0-9]* mfu*
+for file in *
+do
+        cat $file | /usr/sbin/sendmail -oi -t
+        /usr/local/sbin/hostdelay -m 20
+done

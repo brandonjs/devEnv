@@ -1,0 +1,28 @@
+#!/bin/ksh
+#****h* Msync/install_sshkeys[1.0.1] *
+# install_sshkeys -- a script to cvs co msync and put it in place
+#
+## $Id: install_sshkeys,v 1.2 2005/12/20 17:03:35 rmallory Exp $
+## $Log: install_sshkeys,v $
+## Revision 1.2  2005/12/20 17:03:35  rmallory
+## typo... missing quote
+##
+## Revision 1.1  2005/12/20 16:40:41  rmallory
+## install ssh keys as documented in:
+## http://qctes.qualcomm.com/twiki/bin/view/QCTRS/CactusBuild
+##
+## referenced from: http://qctes.qualcomm.com/twiki/bin/view/QCTRS/CactusBuild
+##
+
+### 
+HOME=/ 
+export HOME
+echo "This script will setup ssh keys and install them into the trusted hosts."
+echo "you have to know the root passwords at the trusted host."
+test -f $HOME/.ssh/id_dsa || ssh-keygen -t dsa -N ''
+test -f $HOME/.ssh/authorized_keys2 || cp $HOME/.ssh/id_dsa.pub $HOME/.ssh/authorized_keys2
+
+for i in cactus-frn1
+do 
+cat /.ssh/id_dsa.pub | /bin/ssh -x root@$i " cat >> .ssh/authorized_keys2"
+done

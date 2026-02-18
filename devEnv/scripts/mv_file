@@ -1,0 +1,13 @@
+#!/bin/bash
+
+FILE=/tmp/chrm2
+
+while read line
+do
+	echo $line
+	line2=`echo $line | awk '{print $3}'`
+	echo $line2		
+	FILE2="Charmed - $line2.avi"
+	ls -al "$FILE2"
+	mv "$FILE2" "$line"
+done < /tmp/chrm2

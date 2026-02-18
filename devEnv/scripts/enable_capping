@@ -1,0 +1,13 @@
+#!/bin/bash
+
+PATH=/usr/sbin:/sbin:/usr/bin:/bin
+
+# Enable Fair Share Daemon
+dispadmin -d FSS
+priocntl -s -c FSS -i class TS
+priocntl -s -c FSS -i pid 1
+
+# Enable rcap daemon
+svcadm enable rcap
+rcapadm -E
+

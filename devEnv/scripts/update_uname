@@ -1,0 +1,15 @@
+#!/bin/bash -xv
+
+docName="uname"
+docPath="/tmp/uname"
+
+docVersion=`aws --profile bar_canary_gamma_us_east_1 ssm describe-document --name ${docName} | jq -r .Document.DefaultVersion`
+let docVersion=$docVersion+1
+
+lambda="/Users/bsschwar/Downloads/varia_lambdas.zip"
+csum=`sha256sum $lambda | awk '{print $1}'`
+sed -i -e "s/\(.*\"sha256\": \"\).*/\1${csum}\"/g" ${docPath}
+
+aws --profile bar_canary_gamma_us_east_1 s3 cp $lambda s3://bonesbootstrap-iad-gamma-deploymentbucket-10br3zgd7483b/BarristerCanaryNotSSHDocumentsInfrastructure/development:BarristerCanaryNotSSHDocumentsInfrastructure-1.0:AWSLambda-1.0:BarristerCanaryNotSSHDocumentsInfrastructure-1.0/a8bfa763-b422-4b94-963e-7bea76f9f6d2/packaging_additional_published_artifacts/
+aws --profile bar_canary_gamma_us_east_1 ssm update-document --name ${docName} --content file://${docPath} --document-version \$LATEST --attachments Key=SourceUrl,Values=s3://bonesbootstrap-iad-gamma-deploymentbucket-10br3zgd7483b/BarristerCanaryNotSSHDocumentsInfrastructure/development:BarristerCanaryNotSSHDocumentsInfrastructure-1.0:AWSLambda-1.0:BarristerCanaryNotSSHDocumentsInfrastructure-1.0/a8bfa763-b422-4b94-963e-7bea76f9f6d2/packaging_additional_published_artifacts
+aws --profile bar_canary_gamma_us_east_1 ssm update-document-default-version --name ${docName} --document-version $docVersion

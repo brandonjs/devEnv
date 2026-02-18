@@ -1,0 +1,140 @@
+#!/bin/bash
+
+
+print_usage() {
+    echo "Usage: get-midway-software-cert [-h] [-d DESKTOP]
+
+This script generates a client SSL certificate valid for 23 hours using the
+aws-gov partiton's Midway stack. This cert can be used to authenticate against
+anything using Midway auth in the aws-gov partition, including Isengard.
+
+The client certificate and key will be copied to your dev desktop. Your dev
+desktop's host name may be passed in using the -d flag, read from the
+DEV_DESKTOP environment variable, or read from \$HOME/.midway/dev-desktop,
+with lookup occuring in that order.
+
+This script only supports Mac OS. If you need to generate a software cert on
+a Linux/Windows machine, you can do so from the Midway website. You may need
+to export the cert/key from the system's certificate store. Assuming the
+exported certificate is a pkcs12 file, the following commands will export
+the cert/key in the format needed by BenderLibIsengard:
+
+pkcs_file=<path to pkcs12 file with your key>
+rm -f ~/.midway/key ~/.midway/public_key.crt
+/usr/bin/openssl pkcs12 -in \"\$pkcs_file\" -clcerts -nokeys -out ~/.midway/public_key.crt
+/usr/bin/openssl pkcs12 -in \"\$pkcs_file\" -nocerts -nodes -out ~/.midway/key
+chmod 400 ~/.midway/public_key.crt
+chmod 400 ~/.midway/key
+"
+}
+
+
+if [[ "$(uname -s)" != "Darwin" ]] && [[ "$(uname -s)" != "Linux" ]]; then
+    echo 'Non-Mac/Linux operating systems are not supported.' >&2
+    print_usage >&2
+    exit 1
+fi
+
+
+while getopts ':d:h' opt; do
+    case "$opt" in
+        h)
+            print_usage >&2
+            exit 0
+            ;;
+        d)
+            dev_desktop="$OPTARG"
+            ;;
+        ?)
+            echo "-${OPTARG} is not a valid option or requires an argument." >&2
+            print_usage >&2
+            exit 1
+            ;;
+    esac
+done
+
+
+if [[ -e /usr/local/opt/curl/bin/curl ]]; then
+    curl_bin=/usr/local/opt/curl/bin/curl
+else
+    curl_bin=curl
+fi
+
+if [[ "$(uname -s)" == "Darwin" ]]; then
+    if ! $curl_bin --version | grep -q "SecureTransport"; then
+        echo "Your version of curl is not compiled with the SecureTransport SSL(Mac) backend. Try installing curl using Homebrew:" >&2
+        echo "brew install curl" >&2
+        exit 1
+    fi
+elif [[ "$(uname -s)" == "Linux" ]]; then
+    if ! $curl_bin --version | grep -q "OpenSSL"; then
+        echo "Your version of curl is not compiled with the OpenSSL(Linux) backends. Try installing curl from source." >&2
+        exit 1
+    fi
+fi
+
+pdt_midway=https://midway.pdt.amazon.com
+openssl=/usr/bin/openssl
+cookie_jar=/tmp/midway-web-cookie
+midway_dir="${HOME}/.midway"
+cert="${midway_dir}/public_key.crt"
+key="${midway_dir}/key"
+if [[ "$(uname -s)" == "Linux" ]]; then
+    curl_arg=$(p11tool --list-all-certs "pkcs11:model=eToken;manufacturer=SafeNet%2c%20Inc." 2>&1 | grep URL | awk '{print $2;}' | sed 's/object=midway;//g')
+elif [[ "$(uname -s)" == "Darwin" ]]; then
+    curl_arg=${USER}
+fi
+curl="${curl_bin} -Ss -E ${curl_arg} -b ${cookie_jar} -c ${cookie_jar}"
+: "${dev_desktop:="$DEV_DESKTOP"}"
+: "${dev_desktop:="$(cat "${HOME}/.midway/dev-desktop" 2> /dev/null)"}"
+
+
+mkdir -p "$midway_dir"
+chmod 700 "$midway_dir"
+rm -f "$key" "$cert"
+
+
+csrf_request="$($curl "$pdt_midway")"
+csrf_token="$(
+echo "$csrf_request" \
+    | grep -m1 '/legacy/certificate/generate' \
+    | grep -Eo 'authenticity_token.*' \
+    | perl -ne 'print "$1" if /(?<=value=")(.*?)(?=")/'
+)"
+if [[ -z "$csrf_token" ]]; then
+    if grep -iq 'access denied' <<< "$csrf_request"; then
+        echo "Wasn't able to auth with PDT Midway. Is your token plugged in?" >&2
+    else
+        echo "Unable to parse CSRF token from response:" >&2
+        echo "$csrf_request" >&2
+    fi
+    exit 1
+fi
+
+
+$openssl genrsa -out "$key" 2048 2> /dev/null && chmod 400 "$key"
+
+
+csr="$($openssl spkac -key "$key" -challenge 123456 | sed -e s/^SPKAC=//)"
+generate_response="$(
+$curl \
+    -X POST \
+    --data-urlencode "public_key=${csr}" \
+    --data-urlencode "authenticity_token=${csrf_token}" \
+    "${pdt_midway}/certificate/generate"
+)"
+if [[ "$generate_response" =~ download_cert=([0-9]+) ]]; then
+    certificate_id="${BASH_REMATCH[1]}"
+else
+    echo "Could not parse the generated certificate ID. Response:" >&2
+    echo "$generate_response" >&2
+    exit 1
+fi
+$curl "${pdt_midway}/certificate/${certificate_id}/viewraw" -o "$cert" && chmod 400 "$cert"
+
+
+if [[ -n "$dev_desktop" ]]; then
+    ssh "$dev_desktop" 'rm -f "${HOME}/.midway/key" "${HOME}/.midway/public_key.crt"'
+    rsync -qav "$cert" "${dev_desktop}:.midway/public_key.crt"
+    rsync -qav "$key" "${dev_desktop}:.midway/key"
+fi

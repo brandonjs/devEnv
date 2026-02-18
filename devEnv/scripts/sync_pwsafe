@@ -1,0 +1,15 @@
+#!/bin/bash
+
+PATH=/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin
+[ ! -d /tmp/mnt ] && mkdir /tmp/mnt
+mount_smbfs -N "smb://bsschwar@ant.amazon.com/dept-na/msn4/DEPT2/" /tmp/mnt
+if [ -f /tmp/mnt/Technical\ Services/ProdSysPasswords.psafe3 ]; then
+   mv /Users/bsschwar/.pwsafe/ProdSysPasswords.psafe3 /Users/bsschwar/.pwsafe/ProdSysPasswords.psafe3.bak
+   rsync -az /tmp/mnt/Technical\ Services/ProdSysPasswords.psafe3 /Users/bsschwar/.pwsafe/ProdSysPasswords.psafe3
+   [ $? -eq 0 ] || echo "Rsync failed."
+else
+   echo "Mount failed."
+fi
+[ ! -f /Users/bsschwar/.pwsafe/ProdSysPasswords.psafe3 ] && mv /Users/bsschwar/.pwsafe/ProdSysPasswords.psafe3.bak /Users/bsschwar/.pwsafe/ProdSysPasswords.psafe3
+umount /tmp/mnt
+[ -d /tmp/mnt ] && rmdir /tmp/mnt

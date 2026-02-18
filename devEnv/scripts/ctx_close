@@ -1,0 +1,15 @@
+#!/bin/bash
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/opt/CTXSmf/sbin:/opt/CTXSmf/bin
+
+ctxcfg -k loadfactor=1
+
+while true
+do 
+	ARG=`ctxqsession | wc -l`
+	let "ARG -= 1"
+	ctxcfg -l max=`echo $ARG`
+	ctxcfg -g | grep max=
+        ctxsrv stop browser
+        ctxsrv start browser
+	sleep 600
+done

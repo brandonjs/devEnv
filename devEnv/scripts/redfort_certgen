@@ -1,0 +1,86 @@
+#!/bin/bash
+CN=$1
+DESC="$2"
+SANs="$3"
+E="!"
+ 
+if [ -n "`klist 2>&1 | egrep 'No credentials cache found'`" ]; then
+   echo "Need to have an existing kerberos ticket"
+   kinit
+fi
+ 
+payloadFile="/tmp/payload"
+teamAlias="Your team name as it exists in redfort"
+material_name="com.amazon.certificates.$CN-STANDARD_SSL_SERVER_INTERNAL_ENDPOINT-RSA"
+ 
+cat << EOF > $payloadFile
+amz-1.0;com.amazon.redfort.RedfortService.createCertificateRecord;{"CreateCertificateRecordPayload":
+  {"ApplicationDetails":
+    {"ApplicationDescription": "$DESC",
+     "AnvilID": "",
+     "AWSReviewId": "",
+    "IsAWS": false},
+   "certificateIssuanceMode": "GENERATE_VIA_REDFORT",
+   "CertificateRecordType": "STANDARD_SSL_SERVER_INTERNAL_ENDPOINT",
+   "CertificatePrincipals":
+EOF
+if [ "x$SANs" != "x" ]; then
+cat << EOF >> $payloadFile
+    {"CN": "$CN",
+    "SANs":
+      ["$SANs"]
+EOF
+else
+cat << EOF >> $payloadFile
+    {"CN": "$CN"
+EOF
+fi
+ 
+cat << EOF >> $payloadFile
+    },
+   "CertificatePrincipalType": "DOMAIN_NAME",
+   "TeamAlias": "$teamAlias",
+   "CertificateDetails":
+    {
+     "csr": "",
+     "certificateString": "$DESC",
+     "keyAlgorithm": "RSA",
+     "keySize": "2048",
+     "certificateValidityInDays": 365,
+     "certSignatureAlgorithm": "SHA256_WITH_RSA_ENCRYPTION",
+     "certificateAuthorityType": "INTERNAL_CA"
+     },
+   "listOfPrivateKeyDistributionOptions":
+    ["Custom"],
+  "AutoRenewAndBind":
+   {"IsAutoRenew": true,
+     "IsAutoBind": true}
+  }
+}
+EOF
+ 
+curl --verbose -k -u $USER "https://redfort-api.amazon.com/${E}`cat $payloadFile | base64 | tr -d '[[:space:]]'`"
+if [ $? != "0" ]; then
+   exit
+fi
+ 
+sleep 5
+ 
+/apollo/bin/env -e OdinTools odin adminapi AddPermission -n $material_name -RSA -h `hostname` -o Retrieve -u $USER
+/apollo/bin/env -e OdinTools odin adminapi AddMSToHost -n $material_name -RSA -h `hostname`
+ 
+sleep 10
+ 
+[ ! -d certs ] && mkdir certs
+ 
+curl -s "http://localhost:2009/query?Operation=retrieve&ContentType=JSON&material.materialName=$material_name&material.materialType=Certificate" \
+    | tr '{},' '\n\n\n' \
+    | sed -n 's/"materialData":"\(.*\)"/\1/p' \
+    | base64 -di \
+    | openssl x509 -inform DER > certs/$CN.crt
+ 
+curl -s "http://localhost:2009/query?Operation=retrieve&ContentType=JSON&material.materialName=$material_name&material.materialType=PrivateKey" \
+    | tr '{},' '\n\n\n' \
+    | sed -n 's/"materialData":"\(.*\)"/\1/p' \
+    | base64 -di \
+    | openssl pkcs8 -nocrypt -inform DER -outform PEM > certs/$CN.key

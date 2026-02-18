@@ -1,0 +1,27 @@
+version: "1.0"
+properties:
+  serverversion:
+    lastchecktimestamp: -62135596800
+    version: 0.0.0.0
+  images:
+    lastupdatetimestamps:
+      27a59f92c2ce412c0e3892d8a7708f59: 1611843164
+      59a048fd541849a6fd32ea3307119ad1: 1620072615
+      71a2290f0d7d1f8803f786bc97ce4f57: 1618422774
+      520b1b5948f01682df1e3a2dd0a27a13: 1618422891
+      4967b6ac24f01682df1e383a12df3538: 1620823948
+      9624d29fb97ae801b12e4be239a47c39: 1618422790
+      66323d7bf17d1f8803f783ec51a4c614: 1620823661
+      a923aee6d9a49e31b4ebd420804cf872: 1597081735
+      a28211ce6a7ae801b12e4efb635e0745: 1620823712
+      bbb46ed9140164490876e562e459c935: 1611843061
+      c155005be429c2a04296621d32ba958a: 1611843066
+    awsregion: us-east-1
+  cli:
+    completionscriptpaths:
+      bash: /usr/local/etc/bash_completion.d/rde
+  midway:
+    cookiehash: 402350d13f1fdcb06a764fb5a85a1c0bb841186e
+  placeholders:
+    LogsAccountID: 971593487406
+    EsDomainFqdn: vpc-chozose-esdoma-1tyndff9qkx1n-uo7ou2jd5cgvzrjmvihcqc2htm.us-east-1.es.amazonaws.com

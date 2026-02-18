@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for sum in md5sum sha1sum sha256sum
+do 
+   for file in extras/binary-amd64/Packages*
+   do
+      echo "`$sum $file | awk '{print $1}'` `ls -al $file | awk '{print $5}'` $file"
+   done
+done

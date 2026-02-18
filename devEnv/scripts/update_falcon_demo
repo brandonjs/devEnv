@@ -1,0 +1,19 @@
+#!/bin/bash -xv
+
+docName="FalconDemoTest"
+profile="bsschwar"
+userName="bsschwar"
+docPath="/Users/${userName}/${docName}"
+#bucket="aws_varia_pipeline-svlambdatest"
+bucket="bsschwar-svlambdatest"
+
+docVersion=`aws --profile ${profile} ssm describe-document --name ${docName} | jq -r .Document.DefaultVersion`
+let docVersion=$docVersion+1
+
+lambda="/Users/bsschwar/workplace/BsschwarVaria/src/BsschwarVariaCDK/build/cdk.out/varia_lambdas.zip"
+csum=`sha256sum $lambda | awk '{print $1}'`
+sed -i -e "s/\(.*\"sha256\": \"\).*/\1${csum}\"/g" ${docPath}
+
+aws --profile ${profile} s3 cp $lambda s3://${bucket}/
+aws --profile ${profile} ssm update-document --name ${docName} --content file://${docPath} --document-version \$LATEST --attachments Key=SourceUrl,Values=s3://${bucket}
+aws --profile ${profile} ssm update-document-default-version --name ${docName} --document-version $docVersion

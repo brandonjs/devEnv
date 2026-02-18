@@ -1,0 +1,54 @@
+#!/usr/bin/perl -w
+#
+use strict;
+use Data::Dumper;
+use LWP::Simple;
+use JSON::PP;
+
+my %stks = (
+    ".DJI" => { "name" => "Dow Jones", }, 
+    ".IXIC" => { "name" => "Nasdaq", }, 
+    ".INX" => { "name" => "S&P500", }, 
+    "SPY" => { "name" => "SPDR S&P 500", }, 
+    "AMZN" => { "name" => "Amazon", }, 
+    "QCOM" => { "name" => "Qualcomm", }, 
+    "ARAY" => { "name" => "AccuRay", }, 
+    "ZN" => { "name" => "Zion Oil", }, 
+    "AAPL" => { "name" => "Apple", }, 
+    "GOOG" => { "name" => "Google Cl A", }, 
+    "GOOGL" => { "name" => "Google Cl C", },
+);
+
+my $syms = join(',', sort(keys %stks));
+my $content;
+$content = get("http://finance.google.com/finance/info?client=ig&q=$syms") or die "Couldn't get it!" unless defined $content;
+$content =~ s/\/\//{ "stockData":/g;
+$content =~ s/\R//g;
+$content = $content . "}";
+my $jsonData = decode_json($content);
+my $black="\033[00m";
+my $red="\033[31m";
+my $green="\033[32m";
+
+if ($ARGV[0] && $ARGV[0] eq "name") {
+    foreach (sort keys %stks) {
+        printf "%-20s\n", $black . $stks{uc($_)}{"name"};
+    }
+
+} else {
+    while (my ($k, $v) = each ($jsonData->{"stockData"})) {
+        my $percent = $v->{"cp"};
+        if ($percent =~ m/^[0-9]/) {
+            $percent = "+" . $percent;
+        }
+        $percent = "(" . $percent . ")";
+        my $change = $v->{"c"};
+        my $color = $green;
+        if ($change =~ m/^-/) {
+            $color = $red;
+        }
+
+        printf "$color%10.10s%10.2f%10s\n", $v->{"l"}, $v->{"c"}, $percent;
+#        print $color . $v->{"l"}. "\t" . $v->{"c"} . "\t" . $percent . "\n";
+    }
+}

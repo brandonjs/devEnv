@@ -1,0 +1,13 @@
+#!/bin/bash
+
+awscurl http://0.0.0.0:20202/api/v1/management/namespace --region "us-east-1" -X POST --data '{ "domain_name": "amazon.aws","owner": "bsschwar@","description": "Namespace created for tutorial demo"}'  | jq
+namespace_id=`awscurl http://0.0.0.0:20202/api/v1/management/namespace --region "us-east-1" -X POST --data '{ "domain_name": "amazon.aws.tutorial","owner": "bsschwar@","description": "Namespace created for tutorial demo"}'  | jq .id`
+
+policy_set_id=`awscurl http://0.0.0.0:20202/api/v1/management/policy_set --region "us-east-1" -X POST --data '{ "namespace_id": '${namespace_id}', "name": "Tutorial Policy_Set", "description": "Tutorial policy set", "owner": "'$USER'@"}' | jq -r .id`
+
+#policy_id=`awscurl http://0.0.0.0:20202/api/v1/management/policy --region "us-east-1" -X POST --data '{ "policy_set_id": "'${policy_set_id}'", "name": "Tutorial whatever policy", "description": "Policy for whatever you want", "owner": "bsschwar@", "handler_name": "JMESPathPolicyHandler", "compliant_message": "compliant", "not_compliant_message": "Not-compliant", "enrichment_config": { "oncall": { "connector": "OnCallDataSourceConnector" } }, "enrichment_handlers": { "EnrichmentHandlerOnCallService": { "handler_name": "EnrichmentHandlerOnCallService", "handler_target_key": "oncall" } }, "handler_options": { "expression": "enrichments.oncall.is_user_oncall == True" } }' | jq -r .id`
+#policy_id=`awscurl http://0.0.0.0:20202/api/v1/management/policy --region "us-east-1" -X POST --data '{ "policy_set_id": "'${policy_set_id}'", "name": "Tutorial whatever policy", "description": "Policy for whatever you want", "owner": "bsschwar@", "handler_name": "JMESPathPolicyHandler", "compliant_message": "compliant", "not_compliant_message": "Not-compliant", "enrichment_config": { "oncall": { "connector": "OnCallDataSourceConnector" } }, "handler_options": { "expression": "enrichments.oncall == \`UserIsOncall\`" } }' | jq -r .id`
+
+expression=`awscurl http://0.0.0.0:20202/api/v1/management/policy_set/${policy_set_id} --region "us-east-1" -X PUT --data '{ "expression": "ep(\"'${policy_id}'\")"}' | jq -r .id`
+
+#awscurl -H "Content-Type: application/json" -X POST -d '{"barrister_namespace":"amazon.aws.tutorial", "system": { "oncall":{"username": "iulianm"}}}' http://localhost:20202/api/v1/evaluate | jq

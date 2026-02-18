@@ -1,0 +1,105 @@
+#!/bin/bash
+
+umask=007
+HOSTNAME=`hostname`
+NAME=`basename $0`
+SOURCEDIR="/mebes/TBC"
+DATE=`date +%Y%m%d-%H%M`
+DEST="/net/crac-sec-sftp/user/hanasec/outgoing/"
+ARCHIVEDEST="/mebes/ARCHIVE/"
+FILENAME="$DATE.tar.bz2"
+lock=/tmp/$NAME.lock
+dtp_lock=/tmp/done_to_pending.lock
+sec_lock=/tmp/secApproval.lock
+echo $NAME running at `date`
+SUBJECT="Transfer to sftp server complete."
+
+# Source the MailTo file which contains e-mail addresses to send mail to.
+. /common/scripts/MailTo
+
+send_email ()
+{
+	$MAILPROG << EOF
+To: $MAILTO
+CC: $MAILCC
+Subject: $SUBJECT
+
+File $FILENAME has been successfully copied to the sftp server.
+
+Thank you,
+QCT Remote Systems
+
+EOF
+}
+
+if [ `ls -1A $SOURCEDIR | egrep -v "decru|snapshot" | wc -l` -eq 0 ]; then
+  echo "$SOURCEDIR directory empty, not running."
+  exit
+fi
+
+if [ -e $dtp_lock ]; then
+  echo "ERROR: done_to_pending is currently running. Exiting."
+  exit
+fi
+
+if [ -e $sec_lock ]; then
+  echo "ERROR: secApproval.pl is currently running. Exiting."
+  exit
+fi
+
+if [ "$HOSTNAME" != "crac-sec-fileradmin" ]; then
+        echo "Script must only be run on crac-sec-fileradmin host."
+	exit
+fi
+
+if [ -e $lock ]; then
+  echo "ERROR: $0 already running. Exiting."
+  exit
+else
+  touch $lock
+fi
+
+#if [ ! -d $DEST ]; then
+#	mkdir -p $DEST
+#	chgrp 1806 $DEST
+#	chmod g+rw,o-rwx $DEST
+#fi
+
+#if [ ! -d $ARCHIVEDEST ]; then
+#	mkdir -p $ARCHIVEDEST
+#        chmod g+rw,o-rwx $ARCHIVEDEST
+#fi
+
+cd $SOURCEDIR
+if [ -e $FILENAME ]; then
+  rm -r $FILENAME
+fi
+
+if [ `ls .[!.*\|\!decru*\|\!snap*]* | wc -l` -gt 0 ]
+then
+    tar cjf $FILENAME * .[!.*\|\!decru*\|\!snap*]*
+else
+    tar cjf $FILENAME *
+fi
+cp $FILENAME $DEST
+cp $FILENAME $ARCHIVEDEST
+chgrp 1806 $DEST/$FILENAME
+chmod g+rw $DEST/$FILENAME
+if [ `cmp $FILENAME $DEST/$FILENAME` ]; then
+    echo "ERROR: File was not properly copied over to sftp server"
+    echo "Trying again."
+    rm $DEST/$FILENAME
+    cp $FILENAME $DEST
+    chgrp 1806 $DEST/$FILENAME
+    chmod g+rw $DEST/$FILENAME
+    if [ `cmp $FILENAME $DEST/$FILENAME` ]; then
+	echo "Failed to copy the second time as well, killing script."
+        rm $lock
+	exit
+   fi
+fi
+echo "File $FILENAME copied to $DEST successfully."
+rm -r $SOURCEDIR/* $SOURCEDIR/.[!.*\|\!decru*\|\!snap*]*
+rm $lock
+send_email
+exit 0

@@ -1,0 +1,106 @@
+#!/Library/Frameworks/Python.framework/Versions/3.6/bin/python3
+import amazoncerts
+import isengard
+import click
+import boto3
+import os
+import re
+
+
+@click.command()
+@click.option('--source_table', help='Source table to copy', required=True)
+@click.option('--source_account', help='Source AWS Account to access', required=True)
+@click.option('--source_region', help='Source AWS region the Table is in', required=True)
+@click.option('--source_role', help='Source role for Isengard to assume', required=True)
+@click.option('--dest_table', help='Destination table to receive data')
+@click.option('--dest_account', help='Destination AWS Account to access', required=True)
+@click.option('--dest_region', help='Destination AWS region the Table is in')
+@click.option('--dest_role', help='Destination role for Isengard to assume')
+def run(source_table, source_account, source_region, source_role, dest_table, dest_account, dest_region, dest_role):
+    client = isengard.Client()
+
+    if not dest_table:
+        dest_table = source_table
+    if not dest_region:
+        dest_region = source_region
+    if not dest_role:
+        dest_role = source_role
+
+    if re.match(r'[a-zA-Z0-9-+]+', source_account):
+        source_account = get_account_id(client, source_account)
+
+    if re.match(r'[a-zA-Z0-9-+]+', dest_account):
+        dest_account = get_account_id(client, dest_account)
+
+    print("Assuming role for source: {}, role: {}".format(source_account, source_role))
+    source = client.get_boto3_session(source_account, source_role, region=source_region)
+    dynamoclient = source.client('dynamodb')
+
+    print("Assuming role for dest: {}, role: {}".format(dest_account, dest_role))
+    dest = client.get_boto3_session(dest_account, dest_role, region=dest_region)
+    dynamotargetclient = dest.client('dynamodb')
+
+    dynamopaginator = dynamoclient.get_paginator('scan')
+    dynamoresponse = dynamopaginator.paginate(
+        TableName=source_table,
+        Select='ALL_ATTRIBUTES',
+        ReturnConsumedCapacity='NONE',
+        ConsistentRead=True
+    )
+
+    count = 0
+    for page in dynamoresponse:
+        count += int(page['Count'])
+
+    dynamoresponse = dynamopaginator.paginate(
+        TableName=source_table,
+        Select='ALL_ATTRIBUTES',
+        ReturnConsumedCapacity='NONE',
+        ConsistentRead=True
+    )
+    print("copying {} items from source table: {} to target table: {}".format(count, source_table, dest_table))
+    for page in dynamoresponse:
+        for item in page['Items']:
+            dynamotargetclient.put_item(
+                TableName=dest_table,
+                Item=item
+            )
+    print("Done!")
+
+def get_account_id(client, account_name):
+    user_accounts = client.client.get_permissions_for_user().get('PermissionsForUserList')
+    user_accounts = sorted(user_accounts, key=lambda item: item.get('AWSAccountID'))
+    for account in user_accounts[:]:
+        if account.get('AWSAccountMoniker').get('Email').lower().find(account_name) < 0:
+            user_accounts.remove(account)
+
+    if len(user_accounts) == 0:
+        # Warn and exit if no matches were found.
+        sys.exit('No account found matching string: {0}'.format(account_name))
+    elif len(user_accounts) > 1:
+        # Provide a selection if multiple were found
+        print('Available accounts:')
+        count = 1
+        for account in user_accounts:
+            print('{0}: {1}'.format(count, account.get('AWSAccountMoniker').get('Email')))
+            count += 1
+        while True:
+            try:
+                value = input('Select an account (number): ')
+                selection = int(value)
+            except ValueError:
+                if value in ['q', 'Q']:
+                    sys.exit()
+                print('Please enter in a valid selection.')
+                continue
+            else:
+                break
+        account = user_accounts[selection-1]
+    else:
+        # Auto-select the only account if there is only one.
+        account = user_accounts[0]
+    return account.get('AWSAccountID')
+
+
+if __name__ == '__main__':
+    run()

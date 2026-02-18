@@ -1,0 +1,44 @@
+export ODIN_GET="$HOME/workplace/.odin-tools/env/OdinRetrievalScript-1.0/runtime/bin/odin-get"
+#export ODIN_MS=com.amazon.credentials.isengard.971593487406.user/bsschwar
+#export ODIN_MS=com.amazon.credentials.isengard.531950131441.user/bsschwar
+#export AWS_ACCESS_KEY_ID=$($ODIN_GET -t Principal $ODIN_MS)
+#export AWS_SECRET_ACCESS_KEY=$($ODIN_GET -t Credential $ODIN_MS)
+eval $(isengard credentials --role Admin bsschwar@amazon.com)
+export AWS_REGION=us-east-1
+export BARRISTER_BASE_REGION=us-east-1
+export BARRISTER_DATABASE_CREATE_TABLES=True
+export BARRISTER_DATABASE_REGION=us-east-1
+# Enable logging
+export BARRISTER_BASE_LOG_LEVEL="DEBUG"
+# Simulate beta stage
+export BARRISTER_BASE_STAGE=beta
+# Conensus depedency
+export BARRISTER_BETA_US_EAST_1_DEVUSER_ODIN_MS=com.amazon.credentials.isengard.531950131441.user/bsschwar
+export BARRISTER_CONSENSUS_REGION=us-east-1
+export BARRISTER_CONSENSUS_ENDPOINT=https://api.gamma.consensus.a2z.com
+export BARRISTER_CONSENSUS_AWS_ACCESS_KEY_ID=`$ODIN_GET -t Principal $BARRISTER_BETA_US_EAST_1_DEVUSER_ODIN_MS`
+export BARRISTER_CONSENSUS_AWS_SECRET_ACCESS_KEY=`$ODIN_GET -t Credential $BARRISTER_BETA_US_EAST_1_DEVUSER_ODIN_MS`
+# isProduction dependency
+#export BARRISTER_BETA_ISPRODUCTION_ODIN_MS=com.amazon.credentials.isengard.703351961459.user/isproduction 
+#export BARRISTER_IS_PRODUCTION_AWS_ACCESS_KEY_ID=`$ODIN_GET -t Principal $BARRISTER_BETA_ISPRODUCTION_ODIN_MS`
+#export BARRISTER_IS_PRODUCTION_AWS_SECRET_ACCESS_KEY=`$ODIN_GET -t Credential $BARRISTER_BETA_ISPRODUCTION_ODIN_MS`
+#export BARRISTER_IS_PRODUCTION_ENDPOINT="https://regional-api.pdx.komoro.a2z.com"
+# CCS Dependency
+#export BARRISTER_ENRICHMENT_HANDLER_IAM_ROLE=arn:aws:iam::971593487406:role/Enrichments
+export BARRISTER_ENRICHMENT_HANDLER_IAM_ROLE=arn:aws:iam::807976052971:role/barrister-enrichments-handler-us-east-1
+export BARRISTER_CHANGE_CONTROL_SERVICE_IAM_ROLE=${BARRISTER_ENRICHMENT_HANDLER_IAM_ROLE}
+# Oncall Dependency
+export BARRISTER_ONCALL_IAM_ROLE=${BARRISTER_ENRICHMENT_HANDLER_IAM_ROLE}
+export BARRISTER_ONCALL_REGION=us-east-1
+# SIMTT Dependency
+export BARRISTER_SIM_TT_IAM_ROLE=${BARRISTER_ENRICHMENT_HANDLER_IAM_ROLE}
+#export BARRISTER_SIM_TT_IAM_ROLE=arn:aws:iam::807976052971:role/SimTtSyncRoleIAD
+export BARRISTER_SIM_TT_REGION=us-east-1
+# MCM Dependency
+export BARRISTER_MCM_IAM_ROLE=${BARRISTER_ENRICHMENT_HANDLER_IAM_ROLE}
+export BARRISTER_MCM_REGION=us-east-1
+# isproduction Dependency
+export BARRISTER_IS_PRODUCTION_ENDPOINT=https://regional-api.iad.komoro.a2z.com
+export BARRISTER_BETA_US_EAST_1_ISPRODUCTION_ODIN_MS=com.amazon.credentials.isengard.531950131441.user/bsschwar
+export BARRISTER_IS_PRODUCTION_AWS_ACCESS_KEY_ID=$($ODIN_GET -t Principal $BARRISTER_BETA_US_EAST_1_ISPRODUCTION_ODIN_MS)
+export BARRISTER_IS_PRODUCTION_AWS_SECRET_ACCESS_KEY=$($ODIN_GET -t Credential $BARRISTER_BETA_US_EAST_1_ISPRODUCTION_ODIN_MS)

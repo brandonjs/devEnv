@@ -1,0 +1,35 @@
+#!/bin/bash
+#reviewer_group="aws-safety-infrastructure"
+reviewer_group="Pastiche"
+#leader_group="asi-leaders"
+#reviewers=$(ldapsearch -LLL -x -c -h ldap -b "ou=posix groups,ou=infrastructure,o=amazon.com" "cn=${reviewer_group}" memberuid | sed -e '/^dn/d' -e '/^ /d' -e 's/memberuid: //g' -e :a -e '$!N; s/\nmemberuid://; ta')
+#reviewers="amaller andadon neilredd"
+#leaders=($(ldapsearch -LLL -x -c -h ldap -b "ou=posix groups,ou=infrastructure,o=amazon.com" "cn=${leader_group}" memberuid | sed -e '/^dn/d' -e '/^ /d' -e 's/memberuid: //g' -e :a -e '$!N; s/\nmemberuid://; ta'))
+
+excluded=()
+included=()
+
+for item in ${leaders[@]} ${excluded[@]} ${USER}; do 
+    reviewers=${reviewers/${item}/}
+done
+reviewers=($reviewers $included)
+
+#rev=(team:${reviewer_group}:1)
+rev=""
+if [ "$1" == "" ]; then
+    for item in ${reviewers[@]}; do
+        rev+=( "${item}:1" )
+    done
+elif [ $1 -gt 0 ]; then
+  count=0
+  rev=(team:${reviewer_group}:1)
+  until [ $count -ge ${#reviewers[@]} ]; do
+    selected=${reviewers[RANDOM % ${#reviewers[@]}]}
+    if ! [[ ${rev[*]} =~ ${selected} ]]; then
+        rev+=( "${selected}:1" )
+        let count+=1
+    fi
+    [ $count == $1 ] && break
+  done
+fi
+echo $(IFS=, ; echo "${rev[*]}")

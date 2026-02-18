@@ -1,0 +1,11 @@
+#!/bin/bash
+
+fileList=".bashrc .subscriptions .profile.local .ssh .vim* .env"
+user=`whoami`
+
+cd ~/
+for host in $@
+do
+   echo "Copying $fileList to homedir on $host"
+   rsync -avz -e ssh $fileList $user@$host:~/
+done

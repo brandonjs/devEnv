@@ -1,0 +1,47 @@
+#!/bin/bash -xv
+
+cat /proc/mounts | grep -v "^auto." > /tmp/mounts
+#exec 9<&0 </proc/mounts
+exec 9<&0 </tmp/mounts
+
+PROTECTED_MOUNTS="$(sed -n '0,/^\/[^ ]* \/ /p' /proc/mounts)"
+WEAK_MTPTS="" # be gentle, don't use force
+REG_MTPTS=""
+TMPFS_MTPTS=""
+while read DEV MTPT FSTYPE REST
+do
+   echo "$PROTECTED_MOUNTS" | grep -qs "^$DEV $MTPT " && continue
+   case "$MTPT" in
+   /|/proc|/dev|/.dev|/dev/pts|/dev/shm|/dev/.static/dev|/proc/*|/sys|/lib/init/rw)
+      continue
+      ;;
+   /var/run)
+      if [ yes = "$RAMRUN" ] ; then
+         continue
+      fi
+      ;;
+   /var/lock)
+      if [ yes = "$RAMLOCK" ] ; then
+         continue
+      fi
+      ;;
+   esac
+   case "$FSTYPE" in
+   proc|procfs|linprocfs|devfs|sysfs|usbfs|usbdevfs|devpts)
+      continue
+      ;;
+   tmpfs)
+      TMPFS_MTPTS="$TMPFS_MTPTS $MTPT"
+      ;;
+   *)
+      if echo "$PROTECTED_MOUNTS" | grep -qs "^$DEV "; then
+         WEAK_MTPTS="$WEAK_MTPTS $MTPT "
+      else
+         REG_MTPTS="$REG_MTPTS $MTPT"
+      fi
+      ;;
+   esac
+done
+
+exec 0<&9 9<&-
+

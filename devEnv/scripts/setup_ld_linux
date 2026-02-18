@@ -1,0 +1,6 @@
+#!/bin/bash
+
+sudo mkdir -p -m 755 /System/Volumes/Data/lib64
+sudo chown -R bsschwar:staff /System/Volumes/Data/lib64
+echo -e "lib64\t/System/Volumes/Data/lib64" | sudo tee -a /etc/synthetic.conf
+echo -e "\n" > /System/Volumes/Data/lib64/ld-linux-x86-64.so.2 && chmod +x /System/Volumes/Data/lib64/ld-linux-x86-64.so.2

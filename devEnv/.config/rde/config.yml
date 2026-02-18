@@ -1,0 +1,21 @@
+version: "1.0"
+properties:
+  serverversion:
+    lastchecktimestamp: -62135596800
+    version: 0.0.0.0
+  images:
+    lastupdatetimestamps:
+      59a048fd541849a6fd32ea3307119ad1: 1750879285
+    awsregion: us-east-1
+  cli:
+    completionscriptpaths:
+      bash: /usr/local/etc/bash_completion.d/rde
+  placeholders:
+    CitadelAccountID: "641945701168"
+    DevAccountID: "971593487406"
+    ElbTargetGroupARN: arn:aws:elasticloadbalancing:us-east-1:971593487406:targetgroup/Chozo-Servi-10SOFSBEUG86J/ba4a5df0b0207eaf
+    EsDomainFqdn: vpc-chozose-esdoma-1tyndff9qkx1n-uo7ou2jd5cgvzrjmvihcqc2htm.us-east-1.es.amazonaws.com
+    HTTP_SERVER_NAME: 5c52309a7d2b.ant.amazon.com
+    LogsAccountID: "971593487406"
+  midway:
+    cookiehash: 87b8a000b9eaf08ed17d774befdd12dc7d0fae10

@@ -1,0 +1,60 @@
+#!/usr/bin/perl -w
+#
+use strict;
+use Data::Dumper;
+use LWP::Simple;
+use JSON::PP;
+use Finance::Quote;
+
+my %stks = (
+    "^DJI" => { "name" => "Dow Jones", }, 
+    "^IXIC" => { "name" => "Nasdaq", }, 
+    "GSPC" => { "name" => "S&P500", }, 
+    "SPY" => { "name" => "SPDR S&P 500", }, 
+    "AMZN" => { "name" => "Amazon", }, 
+    "QCOM" => { "name" => "Qualcomm", }, 
+    "ARAY" => { "name" => "AccuRay", }, 
+    "ZN" => { "name" => "Zion Oil", }, 
+    "AAPL" => { "name" => "Apple", }, 
+    "GOOG" => { "name" => "Google Cl A", }, 
+    "GOOGL" => { "name" => "Google Cl C", },
+);
+
+my $syms = join(',', sort(keys %stks));
+my @syms = (sort { lc($a) cmp lc($b) } (keys %stks));
+my $q = Finance::Quote->new();
+my %quotes = $q->fetch("usa", @syms);
+
+#   print Dumper $q;
+#   print Dumper $q->fetch("usa", @syms);
+my $result;
+my $black="\033[00m";
+my $red="\033[31m";
+my $green="\033[32m";
+
+foreach my $symbol (@syms) {
+   my $change = $quotes{$symbol, "net"};
+	my $price = $quotes{$symbol, "last"};
+   my $percent = "0.00";
+   delete $stks{$symbol} unless $change;
+   next unless $price;
+	my $c2 = $change;
+	$c2 =~ s/^[+-]//g;
+	$percent = ($c2 / $price) * 100;
+
+   my $color = $green;
+   if ($change =~ m/^-/) {
+      $color = $red;
+		$percent = "-$percent";
+	} else {
+		$percent = "+$percent";
+	}
+
+   $stks{$symbol}{"price"} = $price;
+   $stks{$symbol}{"change"} = $change;
+   $stks{$symbol}{"percent"} = $percent;
+   $stks{$symbol}{"color"} = $color;
+}
+
+printf "$black%-13s$stks{$_}{'color'}%9.2f%9.2f%8.2f\n", $stks{$_}{"name"}, $stks{$_}{'price'}, $stks{$_}{'change'}, $stks{$_}{'percent'} for (sort { lc($a) cmp lc($b) } (keys %stks));
+

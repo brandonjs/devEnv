@@ -1,0 +1,9 @@
+#!/pkg/qct/software/perl/bin/perl
+
+use QCTESAvl;
+
+my $vendor = $ARGV[0];
+my $feature = $ARGV[1];
+my $license = QCTES::License->count(vendor => $vendor, lsf_feature_name => $feature);
+
+$license->show();

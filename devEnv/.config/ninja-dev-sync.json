@@ -1,0 +1,319 @@
+{
+  "Version": 3,
+  "DefaultHost": "bsschwar-desk.aka.amazon.com",
+  "DefaultWorkspaceRoot": "/home/bsschwar/workplace",
+  "LocalWorkspaceRoot": "",
+  "ShouldRespectUserSshConfig": false,
+  "RsyncFlags": [],
+  "Exclude": [
+    "/.ninja-dev-sync-target",
+    "/*/build",
+    ".DS_Store"
+  ],
+  "Workspaces": [
+    {
+      "LocalSync": "/Users/bsschwar/workplace/ApolloApiPipelines/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/ApolloApiPipelines/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/ApolloApiPipelines/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/ApolloApiPipelines/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/TurtleRegistrationScript/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/TurtleRegistrationScript/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/TurtleRegistrationScript/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/TurtleRegistrationScript/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/RIPUtils/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/RIPUtils/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/RIPUtils/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/RIPUtils/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/HeliumRadius/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/HeliumRadius/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/HeliumRadius/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/HeliumRadius/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/SeatbeltWorkspace/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/SeatbeltWorkspace/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/SeatbeltWorkspace/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/SeatbeltWorkspace/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/SDETools/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/SDETools/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/SDETools/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/SDETools/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/Boto/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/Boto/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/Boto/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/Boto/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/Mail/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/Mail/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/Mail/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/Mail/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/ASILpt/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/ASILpt/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/ASILpt/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/ASILpt/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerEcsClusterInfrastructure/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerEcsClusterInfrastructure/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerEcsClusterInfrastructure/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerEcsClusterInfrastructure/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerAPIEcsServiceInfrastructure/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerAPIEcsServiceInfrastructure/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerAPIEcsServiceInfrastructure/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerAPIEcsServiceInfrastructure/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerLPT/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerLPT/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerLPT/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerLPT/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerLdapSync/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerLdapSync/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerLdapSync/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerLdapSync/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/Baldur/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/Baldur/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/Baldur/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/Baldur/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerOnCallSync/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerOnCall/BarristerOnCallSync/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerOnCallSync/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerOnCall/BarristerOnCallSync/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/Barrister/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/Barrister/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/Barrister/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/Barrister/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerOnCall/BarristerOnCallInfrastructure/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerOnCall/BarristerOnCallInfrastructure/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerOnCall/BarristerOnCallInfrastructure/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerOnCall/BarristerOnCallInfrastructure/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerOnCall/BarristerOnCallSync/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerOnCall/BarristerOnCallSync/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerOnCall/BarristerOnCallSync/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerOnCall/BarristerOnCallSync/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerOnCall/lpt/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerOnCall/lpt/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerOnCall/lpt/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerOnCall/lpt/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerCanaryNotSSH/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerCanaryNotSSH/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerCanaryNotSSH/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerCanaryNotSSH/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerSimTTSync/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerSimTTSync/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerSimTTSync/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerSimTTSync/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BaldurOctane/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BaldurOctane/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BaldurOctane/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BaldurOctane/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/NotSSHOctane/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/NotSSHOctane/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/NotSSHOctane/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/NotSSHOctane/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerLdapSyncNotSSHInfrastructure/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerLdapSyncNotSSHInfrastructure/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerLdapSyncNotSSHInfrastructure/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerLdapSyncNotSSHInfrastructure/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerCCS/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerCCS/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerCCS/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerCCS/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/ReviewService/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/ReviewService/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/ReviewService/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/ReviewService/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerProxy/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerProxy/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerProxy/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerProxy/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerProxyInfrastructure/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerProxyInfrastructure/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerProxyInfrastructure/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerProxyInfrastructure/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerXRegionDashboardsCDK/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerXRegionDashboardsCDK/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerXRegionDashboardsCDK/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerXRegionDashboardsCDK/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/Varia/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/Varia/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/Varia/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/Varia/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/VariaLpt/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/VariaLpt/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/VariaLpt/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/VariaLpt/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/VariaLogs/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/VariaLogs/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/VariaLogs/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/VariaLogs/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BsschwarVaria/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BsschwarVaria/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BsschwarVaria/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BsschwarVaria/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/VariaLogsDemo/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/VariaLogsDemo/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/VariaLogsDemo/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/VariaLogsDemo/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/VariaOnboarding/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/VariaOnboarding/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/VariaOnboarding/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/VariaOnboarding/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerCanaryNotSSHDocumentsInfrastructure/lpt/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerCanaryNotSSHDocumentsInfrastructure/lpt/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerCanaryNotSSHDocumentsInfrastructure/lpt/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerCanaryNotSSHDocumentsInfrastructure/lpt/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/BarristerCanaryNotSSHDocumentsInfrastructure/BarristerCanaryNotSSHDocumentsInfrastructure/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/BarristerCanaryNotSSHDocumentsInfrastructure/BarristerCanaryNotSSHDocumentsInfrastructure/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/BarristerCanaryNotSSHDocumentsInfrastructure/BarristerCanaryNotSSHDocumentsInfrastructure/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/BarristerCanaryNotSSHDocumentsInfrastructure/BarristerCanaryNotSSHDocumentsInfrastructure/packageInfo",
+      "Exclude": []
+    },
+    {
+      "LocalSync": "/Users/bsschwar/workplace/VariaTestingLpt/src",
+      "RemoteHost": "bsschwar-desk.aka.amazon.com",
+      "RemoteSync": "/home/bsschwar/workplace/VariaTestingLpt/src",
+      "LocalPkgInfo": "/Users/bsschwar/workplace/VariaTestingLpt/packageInfo",
+      "RemotePkgInfo": "/home/bsschwar/workplace/VariaTestingLpt/packageInfo",
+      "Exclude": []
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+" from php snippets
+" F2 close current window (commonly used with my F1/F3 functions)
+noremap <f2> <Esc>:close<CR><Esc>
+
+" php -cw buffer, using a temp file, into a new window
+function! PhpCW()
+   let l:tmpfile1 = tempname()
+   let l:tmpfile2 = tempname()
+
+   execute "normal:w!" . l:tmpfile1 . "\<CR>"
+   execute "normal:! php -cw ".l:tmpfile1." \> ".l:tmpfile2." 2\>\&1 + \<CR>"
+   execute "normal:new\<CR>"
+   execute "normal:edit " . l:tmpfile2 . "\<CR>"
+endfunction
+
+" php buffer, using a temp file, into a new window
+function! PhpOutput()
+   let l:tmpfile1 = tempname()
+   let l:tmpfile2 = tempname()
+
+   execute "normal:w!" . l:tmpfile1 . "\<CR>"
+   execute "normal:! php -l ".l:tmpfile1." \> ".l:tmpfile2." 2\>\&1 \<CR>"
+   execute "normal:new\<CR>"
+   execute "normal:edit " . l:tmpfile2 . "\<CR>"
+endfunction
+
+"function! Unhighlight()
+"               :nohlsearch
+"endfunction
+
+" Settings for editing php source (plus bind the above two functions)
+function! MyPhpSettings()
+   if !did_filetype()
+      set filetype=php
+   endif
+
+   set textwidth=80
+   set expandtab
+   set cindent
+   set comments=:#
+   set formatoptions=croql
+   set keywordprg=man\ -S\ 3
+   noremap <f1> <Esc>:call PhpCW()<CR><Esc>
+   noremap <f3> <Esc>:call PhpOutput()<CR><Esc>
+endfunction
+
+if has("eval")
+   augroup SetEditOpts
+   au!
+   autocmd FileType php :call MyPhpSettings()
+   augroup END
+endif

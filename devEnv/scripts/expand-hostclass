@@ -1,0 +1,5 @@
+#!/usr/bin/env python3
+
+from bender.hostclass import HostClass
+print(HostClass(name='MY-HOSTCLASS').get_child_hostclasses(recurse=True))
+

@@ -1,0 +1,2 @@
+[GIN] 2020/08/31 - 11:53:25 | 400 |    1.977007ms |       127.0.0.1 |  GET     /remote/status?dir=%2FVolumes%2FUnix%2Fworkplace%2FVariaOnboarding%2Fsrc%2FVariaOnboardingScript
+[GIN] 2020/08/31 - 11:53:28 | 200 |    1.542195ms |       127.0.0.1 |  GET     /remote/list

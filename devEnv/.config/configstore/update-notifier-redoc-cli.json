@@ -1,0 +1,10 @@
+{
+	"optOut": false,
+	"lastUpdateCheck": 1749825893579,
+	"update": {
+		"latest": "0.13.21",
+		"current": "0.13.20",
+		"type": "patch",
+		"name": "redoc-cli"
+	}
+}

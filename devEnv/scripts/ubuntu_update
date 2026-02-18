@@ -1,0 +1,106 @@
+#!/bin/bash
+
+PATH=/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin
+
+[ -f /etc/lsb-release ] && . /etc/lsb-release
+
+#Fix broken NX install permissions
+if [ -d "/usr/NX" ]
+then
+   for cfgFile in `find /usr/NX ! -user root ! -user nx`
+   do
+      perm=`stat $cfgFile | awk '/Uid/{print $2}'  | sed -e 's/(//g' -e 's/\/.*//g'`
+      chown 53586 $cfgFile
+      chmod $perm $cfgFile
+   done
+
+   for cfgFile in `find /usr/NX ! -group root ! -group users`
+   do
+      perm=`stat $cfgFile | awk '/Uid/{print $2}'  | sed -e 's/(//g' -e 's/\/.*//g'`
+      chgrp 200 $cfgFile
+      chmod $perm $cfgFile
+   done
+fi
+
+if [ ${DISTRIB_CODENAME} = "intrepid" ]
+then
+   echo ""
+elif [ ${DISTRIB_CODENAME} = "jaunty" ]
+then
+   echo ""
+elif [ ${DISTRIB_CODENAME} = "karmic" ]
+then
+   echo ""
+   [ -n "`dpkg -l | grep qualcomm-nx | grep ^ii`" ] && [ -z "`dpkg -l | grep qualcomm-nx | grep 1.2`" ] && apt-get -y install qualcomm-nx                                           
+   if [ -z "`dpkg -l | grep dbus | grep 1.2.16-0ubuntu9.1`" ]                             
+   then                                                                                   
+      /etc/init.d/nscd stop                                                               
+      [ -z "`dpkg-statoverride --list /lib/dbus-1.0/dbus-daemon-launch-helper`" ] && dpkg-statoverride --update --add root \#81 4754 /lib/dbus-1.0/dbus-daemon-launch-helper
+      apt-get -y install dbus                                                             
+      /usr/local/sbin/run_setups -F group passwd                                          
+      /etc/init.d/nscd start                                                              
+   fi
+elif [ ${DISTRIB_CODENAME} = "lucid" ]
+then
+   echo ""
+   apt-get update
+   touch /var/adm/gv/noupdate
+   if [ -z "`dpkg -l | grep passwd | grep 1:4.1.4.2-1ubuntu2.2`" ]
+   then
+      /etc/init.d/nscd stop
+      sed -i -e '/:42:/d' /etc/passwd /etc/group
+      apt-get -y install passwd
+      rm /var/adm/gv/noupdate
+      /usr/local/sbin/run_setups -F group passwd
+      /etc/init.d/nscd start
+   fi
+
+   if [ -n "`dpkg -l | grep passwd | grep 1:4.1.4.2-1ubuntu2.2 | grep ^iF`" ]
+   then
+      /etc/init.d/nscd stop
+      sed -i -e '/:42:/d' /etc/passwd /etc/group
+      dpkg --configure passwd
+      /usr/local/sbin/run_setups -F group passwd
+      /etc/init.d/nscd start
+   fi
+
+   if [ -z "`dpkg -l | grep dbus | grep 1.2.16-2ubuntu4.1`" ]
+   then
+      /etc/init.d/nscd stop
+      apt-get -y install dbus
+      [ -z "`dpkg-statoverride --list /lib/dbus-1.0/dbus-daemon-launch-helper`" ] && dpkg-statoverride --update --add root \#81 4754 /lib/dbus-1.0/dbus-daemon-launch-helper
+      apt-get -y install dbus
+      /usr/local/sbin/run_setups -F group passwd
+      /etc/init.d/nscd start
+   fi
+   rm /var/adm/gv/noupdate
+
+   if [ -z "`dpkg -l | grep nfs-common | grep 1.2.0-4ubuntu4.1`" ] 
+   then
+      echo "Y" | apt-get -y install nfs-common
+      [ -z "`ps -aef | grep portmap| grep -v grep`" ] && start portmap
+      [ -z "`ps -aef | grep rpc.statd | grep -v grep`" ] && start statd
+   fi
+
+   [ -n "`dpkg -l | grep qualcomm-nx | grep ^ii`" ] && [ -z "`dpkg -l | grep qualcomm-nx | grep 1.2`" ] && apt-get -y install qualcomm-nx
+
+   if [ -z "`dpkg -l | grep autofs5-ldap | grep 5.0.4-3.1ubuntu5.1`" ]
+   then
+      apt-get -y install autofs5-ldap
+   fi
+
+   [ -n "`grep 'rm -rf' /var/lib/dpkg/info/flashplugin-x64.prerm`" ] && sed -i -e '/rm -rf/d' /var/lib/dpkg/info/flashplugin-x64.prerm
+
+   if [ -n "`grep \!2345 /etc/init/autofs.conf`" ]
+   then
+      [ -f /prj/qct/gv-ubuntu/gv-base/GV/patches/lucid/autofs.patch ] && patch -p0 < /prj/qct/gv-ubuntu/gv-base/GV/patches/lucid/autofs.patch
+   fi
+
+   [ -n "`grep 'rm -rf' /var/lib/dpkg/info/flashplugin-x64.prerm`" ] && sed -i -e '/rm -rf/d' /var/lib/dpkg/info/flashplugin-x64.prerm
+
+   [ -z "`dpkg-statoverride --list /usr/bin/at`" ] && dpkg-statoverride --update --add daemon daemon 6755 /usr/bin/at
+   [ -z "`dpkg-statoverride --list /var/spool/cron/atjobs`" ] && dpkg-statoverride --update --add daemon daemon 1770 /var/spool/cron/atjobs
+   [ -z "`dpkg-statoverride --list /var/spool/cron/atjobs/.SEQ`" ] && dpkg-statoverride --update --add daemon daemon 600 /var/spool/cron/atjobs/.SEQ
+   [ -z "`dpkg-statoverride --list /var/spool/cron/atspool`" ] && dpkg-statoverride --update --add daemon daemon 1770 /var/spool/cron/atspool
+   [ -z "`dpkg-statoverride --list /etc/at.deny`" ] && dpkg-statoverride --update --add root daemon 640 /etc/at.deny
+fi

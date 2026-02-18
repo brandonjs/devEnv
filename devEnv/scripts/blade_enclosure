@@ -1,0 +1,75 @@
+#! /pkg/qct/software/perl/q2_05/bin/perl -w
+use strict;
+use Net::Ping;
+
+our $VERSION = sprintf "%d.%03d", q$Revision: 1.5 $ =~ /(\d+)/g;
+
+=head1 NAME
+
+enclosure - a GV extension script to get the chassis slot number
+
+=head1 Revision ID
+
+$Id: enclosure,v 1.5 2011/02/10 21:26:59 carlb Exp carlb $
+
+=head1 DESCRIPTION
+
+This script, along with the B<console> script, is intended to be used in
+conjunction with the B<hpc7k_blade> GV duty. It simply parses the Chassis name
+and Slot Number from the output of the B<dmidecode> command, and formats the
+output string to be used by B<mdbupdate>.
+
+=cut
+
+my ( $slot, $chassis, $oachassis, $oachassisA, $oachassisB, $chassisA, $chassisB, $enclosure );
+# Use dmidecode to determine the enclosure name and slot number this blade is
+# installed in. Note that this may NOT be the same as the DNS name of the
+# enclosure the person configuring it was not careful. There are many cases
+# where the enclosure name is blc<blah>-<blah>-<blah>, but its name in DNS is
+# oa-blc<blah>-<blah>-<blah>. In order to accommodate this, the "console"
+# script tests for ssh access, and if it fails tries prepending "oa-" to the
+# enclsure name to see if that works. It's a hack, but effective for an
+# apparently common configuration error.
+open( DMIDECODE, "/usr/sbin/dmidecode |" );
+while (<DMIDECODE>) {
+    chomp;
+    $slot    = $1 if (/Server Bay: (\d+)/);
+    $chassis = $1 if (/Enclosure Name: (\S+)/);
+}
+close(DMIDECODE);
+
+if ( defined $chassis ) {
+    $chassis =~ tr/A-Z/a-z/;
+    $oachassis = "oa-" . $chassis;
+    $oachassisA = "oa-" . $chassis . "a";
+    $oachassisB = "oa-" . $chassis . "b";
+    $chassisA = $chassis . "a";
+    $chassisB = $chassis . "b";
+    if ($chassis eq "unknown" ) {
+        print "chassis name unknown\n";
+        return(0);
+    }
+    # If the enclosure identified by dmidecode doesn't respond, try the name
+    # with "oa-" prepended to it. Apparently people are not naming the chassis
+    # the same as the DNS name.
+    my $p = Net::Ping->new();
+    foreach ($chassis, $oachassis, $oachassisA, $chassisA, $oachassisB, $chassisB) {
+        if ($p->ping($_)) {
+            $chassis = $_;
+            last;
+        }
+    }
+    $enclosure = $chassis . ",slot-" . $slot;
+
+}
+# OK, just in case this failed, see if the enclosure field is in MDB, and if
+# so use what's there rather than nulling it out.
+else {
+    open( MDB, "/usr/local/bin/mdb \$(hostname) return enclosure |" );
+    while (<MDB>) {
+        $enclosure = $1 if (/enclosure: (\S+)/);
+    }
+    close(MDB);
+}
+
+print "$enclosure\n" if ( defined $enclosure );

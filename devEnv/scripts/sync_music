@@ -1,0 +1,6 @@
+#!/bin/bash
+[ ! -d /mnt ] && sudo mkdir /mnt
+sudo mount -o -P solace:/local/mnt /mnt
+rsync -av --delete --exclude=.DS_Store --exclude=*.mp4 --exclude=*.m4v ~/Music/MP3s/ /mnt/workspace/laptop_home/Music/MP3s/
+rsync -av --delete --exclude=.DS_Store --exclude=*.mp4 --exclude=*.m4v ~/Music/iTunes /mnt/workspace/laptop_home/Music/
+sudo umount /mnt

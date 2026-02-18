@@ -1,0 +1,7 @@
+#!/bin/bash
+SRVR="demo"
+SEVER="CRITICAL"
+EVTSRC="SEC"
+SVCGRP="QCT_CRAC"
+
+/common/scripts/sendevent.linux -server $SRVR -severity $SEVER -eventsource $EVTSRC -kpiname "$1" -servicegroup $SVCGRP -target "$2" -message "$3"

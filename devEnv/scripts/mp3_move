@@ -1,0 +1,42 @@
+#!/bin/bash
+for i in *.mp3 
+do 
+	X=`echo "$i" | awk -F - '{print $1}' | sed 's/[ \t]*$//'`
+	Y=`strings "$i" | grep TYER | sed -e 's/TYER//'`
+	#echo "$X" 
+	#echo "$i"
+	if [ ! -d "$X" ]
+	then
+		mkdir "$X"
+		echo "making dir $X"
+		echo " "
+	fi
+	#if [ "$Y" == "$i" ]
+	#then
+	#	 Y=`strings "$i" | grep TLEN | sed -e 's/TLEN//'`
+	#fi
+	if [ -z "$Y" ]
+	then
+		Y=`strings "$i" | grep TCON | sed -e 's/TCON//'`
+		#if [ "$Y" == "$i" ]
+		#then
+		#	 Y=`strings "$i" | grep TLEN | sed -e 's/TLEN//'`
+		#fi
+	fi
+	#echo $Y
+	if [ ! -z "$Y" ] && [ "$Y" != " " ]
+	then
+		if [ ! -d "${X}/${Y}" ]
+		then
+			echo "making dir ${X}/${Y}"
+			mkdir "${X}/${Y}"
+		fi
+		echo "moving to ${X}/${Y}"
+		mv "$i" "${X}/${Y}/"
+		#echo ""
+	else
+		echo "moving to ${X}"
+		mv "$i" "${X}/"
+		#echo ""	
+	fi
+done

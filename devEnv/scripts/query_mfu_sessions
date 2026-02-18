@@ -1,0 +1,16 @@
+#!/bin/bash
+
+PATH=/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin:/opt/CTXSmf/bin:/opt/CTXSmf/sbin
+
+SITE=`gvquery -p site`
+DATE=`date`
+FILE="/prj/qct/sysadmin/mebus/mfu/mfu.ctxsessions.$SITE"
+
+if [ ! "`gvquery -p duties | grep qct.mfu`" ]
+then
+   echo "This script should only be run on an MFU host"
+   exit 1
+fi
+
+echo $DATE > $FILE
+ctxqsession -S -f uiSd | egrep -wv "Please|unavailable|listen|connQ?" | sort >> $FILE

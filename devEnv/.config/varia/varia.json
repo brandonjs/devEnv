@@ -1,0 +1,17 @@
+{
+  "log_path": "/Users/bsschwar/.local/share/varia/varia-cli.log",
+  "varia_parameter_names": [
+    "BarristerCCSRegion",
+    "BarristerConsensusReviewID",
+    "BarristerConsensusReviewOwner",
+    "BarristerMCMID",
+    "BarristerSIMTTID",
+    "BarristerTeamAlias",
+    "BarristerResources",
+    "OverrideBarrister",
+    "Targets",
+    "InstanceId",
+    "TagName",
+    "TagValue"
+  ]
+}

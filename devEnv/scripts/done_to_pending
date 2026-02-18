@@ -1,0 +1,101 @@
+#!/bin/sh
+
+NAME=`basename $0`
+echo $NAME running at `date`
+
+DATE=`date +%Y%m%d-%T`
+source=/mebes/DONE
+dest=/mebes/PENDING
+last_chk=/common/scripts/.stamp
+lock=/tmp/$NAME.lock
+
+if [ -f $lock ]; then
+  echo "$NAME already running. Remove $lock and try again. Exiting."
+  exit
+else
+  touch $lock;
+fi
+
+if [ ! -d $source ]; then
+  echo SOURCE: $source does not exist. Exiting.
+  rm $lock
+  exit
+fi
+
+if [ `ls -1A "$source" | egrep -v "snapshot|decru" |  wc -l` -lt 1 ]; then
+  echo SOURCE: $source is empty. Exiting.
+  rm $lock
+  exit
+fi
+
+if [ ! -f $last_chk ]; then
+  echo LAST_CHECKED: $last_chk does not exist. Setting default datestamp.
+  touch -d "Aug 24 2003" $last_chk
+fi
+
+cd $source 
+if [ $source -nt $last_chk ]; then
+# COPY_FILES
+  #for file in `ls -A "$source" | egrep -v "snapshot|decru"`
+  ls -A "$source" | egrep -v "snapshot|decru" | while read file
+  do
+      SIZE1=`ls -ald "$source/$file" | awk '{print $5}'`
+      sleep 10
+      SIZE2=`ls -ald "$source/$file" | awk '{print $5}'`
+      if [ $SIZE1 -ne $SIZE2 ]; then
+        echo "$file is changing size.  Exiting."
+        rm $lock
+        exit
+     fi
+  done
+
+  for dir in `find $source/* -type d | grep -v snapshot`
+  do
+     for file in `find $dir -type f`
+     do 
+        mv $file $source
+     done
+     rm -rf $dir
+  done
+
+  cp $source/* $dest/
+  [ `ls .[!.*\|\!decru*\|\!snap*]* | wc -l` -gt 0 ] && cp $source/.[!.*\|\!decru*\|\!snap*]* $dest/
+  #for i in `ls -A "$dest" | egrep -v "snapshot|decru"`
+  ls -A "$dest" | egrep -v "snapshot|decru" | while read i 
+  do
+    if [ `cmp "$source/$i" "$dest/$i"` ]
+    then
+      echo ERROR: File $i in $dest
+      echo does not match $source.
+      echo Evaluate and fix. Keeping file in $source
+    else
+      rm -r "$source/$i"
+    fi
+  done
+
+  cd $dest
+  for archive in `find . -iname '*.tar.gz'`
+  do
+    tar xzf $archive
+    rm -f $archive
+  done
+  for archive in `find . -iname '*.tar.bz2'`
+  do
+    tar xjf $archive
+    rm -f $archive
+  done
+  for archive in `find . -iname '*.tar'`
+  do
+    tar xf $archive
+    rm -f $archive
+  done
+
+  date > $last_chk
+#  find . -type d -empty -exec rm -rf {} \;
+else
+echo No move required
+  date > $last_chk
+fi
+
+rm $lock
+exit 

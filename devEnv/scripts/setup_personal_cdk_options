@@ -1,0 +1,21 @@
+#!/bin/bash
+
+export PERSONAL_BOOTSTRAP=true
+export REGION=us-east-1
+export ACCOUNT_ID=${DEV_ACCOUNT_ID}
+export DISAMBIGUATOR=${USER}
+export ENABLE_CUSTOM_DOMAIN=true
+export DOMAIN_NAME=bsschwar.people.aws.dev
+export DEV_CUSTOM_DOMAIN=${DOMAIN_NAME}
+export HOSTED_ZONE_ID=Z0509172K8NJRKWV8FWE
+
+export DOMAIN=alpha
+export HYDRA_STACK_NAME=ChozoHydraInfrastructure-${DISAMBIGUATOR}-alpha-${REGION}
+export INFRA_STACK_NAME=ChozoServiceInfrastructure-${DISAMBIGUATOR}-alpha-${REGION}
+export APIG_STACK_NAME=ChozoServiceApiGateway-${DISAMBIGUATOR}-alpha-${REGION}
+export SAM_REGION=${REGION}
+export SAM_ASSUME_ACCOUNT_ID=${DEV_ACCOUNT_ID}
+export SAM_ISENGARD_ROLE_NAME=Admin
+export SKIP_REGIONAL_GENERATION=true
+
+export DEPRECATED=quiet

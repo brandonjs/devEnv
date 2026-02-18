@@ -1,0 +1,44 @@
+#!/bin/bash
+[ -f /etc/lsb-release ] && . /etc/lsb-release
+
+[ $DISTRIB_CODENAME = "lucid" ] || exit
+
+if lsof /var/lib/dpkg/lock >> /dev/null; then
+   # file is locked
+   echo "Package Manager is currently running, try again later. Exiting."    
+   exit 1
+fi
+
+if [ -z "`dpkg -l | grep autofs | grep 5.0.5`" ]
+then
+   wget -i - -P /tmp/ << EOF
+http://ubuntu-repo/ubuntu_dev/pool/extras/a/autofs5/autofs5_5.0.5-0ubuntu6_amd64.deb
+http://ubuntu-repo/ubuntu_dev/pool/extras/a/autofs5/autofs5-ldap_5.0.5-0ubuntu6_amd64.deb
+EOF
+   [ $? -ne 0 ] && echo "Error: Unable to copy new packages to /tmp. Exiting." && exit 1
+
+   DEBIAN_FRONTEND=noninteractive dpkg --force-confnew -i /tmp/autofs5_5.0.5-0ubuntu6_amd64.deb /tmp/autofs5-ldap_5.0.5-0ubuntu6_amd64.deb
+   rm -f /tmp/autofs*deb
+fi
+
+if [ -z "`grep 'starting rc' /etc/init/autofs.conf`" ] 
+then
+   patch -p0 << EOF
+--- /etc/init/autofs.conf.orig	2011-07-26 08:18:30.970336318 -0700
++++ /etc/init/autofs.conf	2011-07-26 08:18:40.470328927 -0700
+@@ -2,7 +2,7 @@
+ author		"Chuck Short <zulcss@ubuntu.com>"
+ 
+ start on filesystem and started networking
+-stop on runlevel [!2345]
++stop on starting rc RUNLEVEL=[06]
+ 
+ expect fork
+ respawn
+EOF
+fi
+
+/usr/local/sbin/run_setups -F automount
+
+cd /
+/sbin/restart autofs

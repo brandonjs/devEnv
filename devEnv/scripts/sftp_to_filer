@@ -1,0 +1,101 @@
+#!/bin/sh
+
+user=$1
+sftp_path=/net/crac-sec-sftp/user
+source=$sftp_path/$user/incoming
+dest=/prj/incoming_ftp/$user
+last_chk=/tmp/last_chk_$user
+now=`date +'%Y%m%d-%T'`
+SUBJECT="Transfer from sftp server complete."
+
+. /common/scripts/MailTo
+
+echo $0 running at `date` for user $user
+
+if [ "$#" -ne "1" ]; then
+  echo usage: $0 username
+  exit
+fi
+
+
+
+send_email ()
+{
+	$MAILPROG << EOF
+To: $MAILTO
+CC: $MAILCC
+Subject: $SUBJECT
+
+Files have been successfully copied from the sftp server.                     
+
+Files are located in: $dest/$now.
+
+Thank you,
+QCT Remote Systems
+
+EOF
+}
+
+if [ ! -d $source ]; then
+  ls $source > /dev/null
+  if [ ! -d $source ]; then
+    echo SOURCE: $source does not exist. Exiting.
+    exit
+  fi
+fi
+
+if [ ! -d $dest ]; then
+  ls $dest > /dev/null
+  if [ ! -d $dest ]; then
+    echo DESTINATION: $dest does not exist. Exiting.
+    exit
+  fi
+fi
+
+if [ `ls $source | wc -l` -lt 1 ]; then
+	echo SOURCE: $source is empty. Exiting.
+	exit
+fi
+
+if [ ! -f $last_chk ]; then
+  echo LAST_CHECKED: $last_chk does not exist. Setting default datestamp.
+  touch -d "Aug 24 2003" $last_chk
+fi
+
+if [ $source -nt $last_chk ]; then
+    # Check if the directory is changing size, i.e. being written to.
+    SIZE1=`du -sb $source | awk '{print $1}'`
+    sleep 10
+    SIZE2=`du -sb $source | awk '{print $1}'`
+    if [ $SIZE1 -ne $SIZE2 ]; then
+        echo "$source is changing size.  Exiting."
+        exit
+    fi
+  mkdir $dest/$now
+  chgrp samsung $dest/$now
+  chmod g+s $dest/$now
+
+  # COPY_FILES
+  cp -r $source/* $dest/$now
+  chmod -R g+w $dest/$now
+  DIFF_FLAG=0
+
+  if [ `diff -rq "$source" "$dest/$now" | awk '{print $1}'` ]; then
+    DIFF_FLAG=1 
+  fi
+  if [ $DIFF_FLAG == "1" ]; then
+    echo ERROR: Files in $source
+    echo do not match $dest/$now.
+    echo Evaluate and fix. Keeping files in $source.
+    exit
+  else
+   rm -r $source/*
+   date > $last_chk
+   send_email
+  fi
+else
+echo No move required
+  date > $last_chk
+fi
+
+exit 

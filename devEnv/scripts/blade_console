@@ -1,0 +1,221 @@
+#! /pkg/qct/software/perl/q2_05/bin/perl -w
+# Sure, there are other, newer, better versions available, but none seem to
+# have the necessary Net:SSH:Perl and Math::BigInt::Pari modules to keep the
+# ssh connection brisk.
+
+our $VERSION = sprintf "%d.%03d", q$Revision: 1.3 $ =~ /(\d+)/g;
+
+=head1 NAME
+
+console - a GV extension script to get the chassis slot number
+
+=head1 Revision ID
+
+$Id: console,v 1.3 2011/02/10 21:26:48 carlb Exp carlb $
+
+=head1 DESCRIPTION
+
+This script, along with the B<enclosure> script, is intended to be used in 
+conjunction with the B<hpc7k_blade> GV duty. It parses the Chassis name and 
+Slot Number from the output of the B<dmidecode> command, and then opens an SSH
+session to the OA of the chassis it is in to determine the name of the VC that
+it is associated with. It then formats the output string to be used by B<mdbupdate>.
+
+=cut
+
+use strict;
+#use lib "/pkg/perl/5.8/lib/site_perl/5.8.0";
+use Net::SSH::Perl;
+use IO::Socket;
+
+# GLOBALS:
+our ( $DEBUG, $VERBOSE );
+#$DEBUG = 1;
+#$VERBOSE = 1;
+
+our @PARRAY = (
+    "324568468454543518", "354864321685465164",
+    "543216846+56168418", "354864215879077554",
+    "5230636b6e52303131", "6558697463617c7c",
+    "146513545318643511", "213186435138466366",
+    "211431364115825668", "651353451354318647"
+);
+
+#
+# SSH Parameters to use
+#
+our %ssh_params = (
+    identity_files => [""],
+    protocol       => 2,
+    debug          => 0,
+    options        => [
+        "PubkeyAuthentication no",
+        "StrictHostKeyChecking no",
+        "UserKnownHostsFile /dev/null"
+    ]
+);
+
+#
+# subroutine to test for ssh access
+#
+sub isup_sshd {
+    my ($host) = @_;
+    my $line   = "";
+    print "Trying hostname: " . $host . "\n" if $DEBUG;
+    my $sock   = new IO::Socket::INET(
+        PeerAddr => "$host",
+        PeerPort => "22",
+        Proto    => "tcp",
+    );
+    if ($sock) {
+        eval {
+            local $SIG{ALRM} = sub { die "alarm\n" };
+            alarm 5;
+            $line = <$sock>;
+            alarm 0;
+        };
+        if ($@) {
+            die unless $@ eq "alarm\n";    # die on unexpected errors
+            return 0;
+        }
+        else {
+            if ( $line =~ /^SSH/ ) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        }
+    }
+    else {
+        return 0;
+    }
+}
+
+#
+# Establish an ssh connection
+#
+sub ssh_connect {
+    my ( $login, $host, $password ) = @_;
+    my $return = -1;
+    my $ssh;
+    if ( !isup_sshd($host) ) {
+        print "No response to port 22 on $host\n" if ( $DEBUG && $VERBOSE );
+        $return = -3;
+    }
+    else {
+        print "Connecting to host $host via SSH\n" if ( $DEBUG && $VERBOSE );
+        $ssh = Net::SSH::Perl->new( $host, %ssh_params );
+        print "Authenticating $login on $host via SSH\n"
+          if ( $DEBUG && $VERBOSE );
+        eval { $ssh->login( $login, $password ) };
+        if ($@) {
+            undef $ssh;
+            $return = -2;
+        }
+        else {
+            $return = 0;
+        }
+    }
+    return ( $ssh, $return );
+}
+
+#
+# Run a command over the ssh connection
+#
+sub run_ssh_cmd {
+    my ( $host, $login, $command, $password ) = @_;
+    my ( $ssh, $stdout, $stderr );
+    my $exit_status = 0;
+    ( $ssh, $exit_status ) = ssh_connect( $login, $host, $password );
+    if ( $exit_status == 0 ) {
+        print "Running command $command\n" if ( $DEBUG && $VERBOSE );
+        ( $stdout, $stderr, $exit_status ) = $ssh->cmd($command);
+        undef $ssh;
+        return ($stdout);
+    }
+    elsif ( $exit_status == -1 ) {
+        return("chassis $host ssh failure");
+    }
+    elsif ( $exit_status == -2 ) {
+        return("chassis $host login failure");
+    }
+    elsif ( $exit_status == -3 ) {
+        return("chassis $host not responding");
+    }
+    else {
+        return("chassis $host unknown error");
+    }
+}
+
+#
+# Get chassis name and bay id
+#
+sub chassis_info {
+    my ( $bay, $chassis );
+    open( DMIDECODE, "/usr/sbin/dmidecode |" );
+    while (<DMIDECODE>) {
+        chomp;
+        $bay     = $1 if (/Server Bay: (\d+)/);
+        $chassis = $1 if (/Enclosure Name: (\S+)/);
+    }
+    close(DMIDECODE);
+    return ("unknown","unknown") if ((!$chassis)||(!$bay));
+    $chassis =~ tr/A-Z/a-z/;
+#    $chassis = $chassis . "a";
+    return ( $chassis, $bay );
+}
+
+#
+# Main
+#
+sub main {
+    my ($BAY, $CHASSIS, $oachassis, $oachassisA, $oachassisB, $chassisA, $chassisB, $bay, @iLO_Name, $interested, $result, @resarray, $password );
+    # Use dmidecode to look up the enclosure name and slot number so we can
+    # query the enclosure for the associated VC by slot number.
+    ($CHASSIS,$BAY)=chassis_info();
+    $oachassis = "oa-" . $CHASSIS;
+    $oachassisA = "oa-" . $CHASSIS . "a";
+    $oachassisB = "oa-" . $CHASSIS . "b";
+    $chassisA = $CHASSIS . "a";
+    $chassisB = $CHASSIS . "b";
+    if ($CHASSIS eq "unknown" ) {
+        print "chassis name unknown\n";
+        return(0);
+    }
+    # If the enclosure identified by dmidecode doesn't respond, try the name
+    # with "oa-" prepended to it. Apparently people are not naming the chassis
+    # the same as the DNS name.
+    if ( ! isup_sshd($CHASSIS)) {
+        foreach ($oachassis, $oachassisA, $chassisA, $oachassisB, $chassisB) {
+            if (isup_sshd($_)) {
+                $CHASSIS = $_;
+                last;
+            }
+        }
+    }
+
+    $password = pack( "H*", $PARRAY[4] );
+    $result     = run_ssh_cmd( $CHASSIS, "Administrator", "show server list", $password );
+    if ( $result =~ /(error|not responding|failure)/i ) {
+        $password = pack( "H*", $PARRAY[5] );
+        $result = run_ssh_cmd( $CHASSIS, "sysadmin", "show server list", $password );
+    }
+    @resarray   = split( /\n/, $result );
+    foreach my $line (@resarray) {
+        $interested = 1 if ( $line =~ /^Bay iLO Name/ );
+        $interested = 0 if ( $line =~ /^Totals: / );
+        next if ( !$interested );
+        next if ( $line =~ /^Bay iLO / );
+        next if ( $line =~ /^---/ );
+        $iLO_Name[$1] = $2 if ( $line =~ /^ +(\d+) (\S+)/ );
+    }
+    if (defined $iLO_Name[$BAY]) {
+        print "$iLO_Name[$BAY]\n";
+    }
+    else {
+        print "$result\n";
+    }
+}
+
+main();

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+/usr/bin/gem mirror --config-file=/prj/qct/sysadmin/rubygems/gemmirror.config
+/usr/bin/gem generate_index -d /prj/qct/sysadmin/rubygems/gemMirror/
+
+rsync -az --delete --exclude=.snapshot /prj/qct/sysadmin/rubygems/gemMirror/ ubuntu-vmrepo-p3:/data/ubuntu-repo-dmz/rubygems/

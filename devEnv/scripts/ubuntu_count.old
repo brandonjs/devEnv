@@ -1,0 +1,33 @@
+#!/bin/bash
+
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin:/pkg/ice/sysadmin/bin
+FILE=/tmp/count.$$
+
+clear
+echo;echo "Ubuntu machine count"
+mdbfield duties=ubuntu.\* return name site hw_model os_dist duties status | sort -k 2 > $FILE
+mdbfield admin_contact=acme.admin os_dist=ubuntu\* return name site hw_model os_dist duties status | sort -k 2  >> $FILE
+echo "--Total Hosts: `cat $FILE | wc -l`--"
+echo "`egrep '(ubuntu8-10|debian-lenny/sid)' $FILE | wc -l` Intrepid."
+echo "`grep ubuntu9-04 $FILE | wc -l` Jaunty."
+echo "`grep ubuntu9-10 $FILE | wc -l` Karmic."
+echo "`grep ubuntu10-04 $FILE | wc -l` Lucid."
+echo "`grep debian $FILE | grep -v "debian-lenny/sid" | wc -l` Debian (of some sort)."
+echo "`egrep -v "(8-10|9-04|9-10|10-04|debian)" $FILE | wc -l` Unknown."
+echo 
+echo "--Total Online Hosts: `grep online $FILE | wc -l`--"
+echo
+echo "Desktops: `cat $FILE | grep ubuntu.desktop | grep online | wc -l`"
+echo "Servers: `cat $FILE | grep -v ubuntu.desktop | grep online | wc -l`"
+echo
+echo "--Total Offline Hosts: `grep offline $FILE | wc -l`--"
+echo
+echo "Desktops: `cat $FILE | grep ubuntu.desktop | grep offline | wc -l`"
+echo "Servers: `cat $FILE | grep -v ubuntu.desktop | grep offline | wc -l`"
+echo
+echo "--Numbers by site--"
+cat $FILE | awk -F"\t" '{print $2}' | sort | uniq -c
+echo
+echo "--Model Types--"
+cat $FILE | awk -F"\t" '{print $3}' | sort | uniq -c
+rm $FILE

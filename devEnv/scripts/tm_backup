@@ -1,0 +1,11 @@
+#!/bin/bash
+
+sudo launchctl unload -w /Library/LaunchDaemons/com.qualys.cloud-agent.plist
+sudo launchctl unload -w /Library/LaunchDaemons/com.crowdstrike.falcond.plist
+sudo launchctl unload -w /Library/LaunchDaemons/com.crowdstrike.userdaemon.plist
+
+tmutil startbackup -a -b -r -d F3918E31-2A0A-4ED4-AE90-F19443C888D5
+
+sudo launchctl load -w /Library/LaunchDaemons/com.crowdstrike.userdaemon.plist
+sudo launchctl load -w /Library/LaunchDaemons/com.crowdstrike.falcond.plist
+sudo launchctl load -w /Library/LaunchDaemons/com.qualys.cloud-agent.plist

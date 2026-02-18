@@ -1,0 +1,25 @@
+#!/bin/bash
+
+for i in {0..52..2}
+do 
+   date=`date -d "+$i weeks +1 day" +'%B %e %Y'`
+   set -- $date
+   month=$1
+   shift
+   day=$1
+   shift
+   year=$1
+   if [ $day -eq 1 ] || [ $day -eq 21 ] || [ $day -eq 31 ]
+   then
+      day=${day}st
+   elif [ $day -eq 2 ] || [ $day -eq 22 ]
+   then
+      day=${day}nd
+   elif [ $day -eq 3 ] || [ $day -eq 23 ]
+   then
+      day=${day}rd
+   else
+      day=${day}th
+   fi
+   echo "$month $day $year [[Brandon_Schwartz/${month}_${day}_${year} | status]]<br />"
+done

@@ -1,0 +1,76 @@
+#!/bin/bash -x
+
+paths="/prj/qct/gv-ubuntu /prj/qct/gv-ubuntu-dev /prj/lnxbuild /usr2/smanley /prj/qct/gv /prj/qct/asw/qct_samba/ /prj/lnxbuild1/ /net/smanley-ubuntu/local/mnt/workspace/ /usr2/brandons /usr2/lnxbuild"
+abcfile="/prj/qct/gv-ubuntu/abcdfile"
+
+counter="0"
+while [ $counter -lt 10000 ]
+do
+   echo "abcd" >> $abcfile
+   let counter=$counter+1
+   [ -z "`ps -aef | grep '/usr/sbin/automount' | grep -v grep`" ] && start autofs
+   pkill -HUP automount
+done &
+
+stop autofs
+start autofs
+
+for dir in $paths
+do 
+   ls -al $dir > /dev/null 2>&1
+done
+
+reload autofs
+[ -z "`ps -aef | grep '/usr/sbin/automount' | grep -v grep`" ] && start autofs
+
+for dir in $paths
+do
+   umount $dir > /dev/null 2>&1
+done
+
+reload autofs
+[ -z "`ps -aef | grep '/usr/sbin/automount' | grep -v grep`" ] && start autofs
+
+for dir in $paths
+do 
+   ls -al $dir > /dev/null 2>&1
+done
+
+restart autofs
+[ -z "`ps -aef | grep '/usr/sbin/automount' | grep -v grep`" ] && start autofs
+
+for dir in $paths
+do
+   umount $dir > /dev/null 2>&1
+done
+
+restart autofs
+[ -z "`ps -aef | grep '/usr/sbin/automount' | grep -v grep`" ] && start autofs
+
+for dir in $paths
+do 
+   ls -al $dir > /dev/null 2>&1
+done
+
+[ -z "`ps -aef | grep '/usr/sbin/automount' | grep -v grep`" ] && start autofs
+pkill -HUP automount
+[ -z "`ps -aef | grep '/usr/sbin/automount' | grep -v grep`" ] && start autofs
+
+for dir in $paths
+do
+   [ -z "`ps -aef | grep '/usr/sbin/automount' | grep -v grep`" ] && start autofs
+   umount $dir > /dev/null 2>&1
+done
+
+count=0
+#while [ $count -lt 20 ]
+#do
+#   pkill -HUP automount
+#   let counter=$counter+1
+#done
+
+umount -t nfs -a
+cat /dev/null > $abdfile
+wait
+
+[ -z "`ps -aef | grep '/usr/sbin/automount' | grep -v grep`" ] && start autofs

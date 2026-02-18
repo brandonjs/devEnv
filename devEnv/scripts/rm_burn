@@ -1,0 +1,7 @@
+#!/bin/bash
+
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
+
+chkconfig --del burn
+rm -f /etc/init.d/burn /etc/init.d/rc?.d/S99burn
+/sbin/reboot

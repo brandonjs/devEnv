@@ -1,0 +1,6 @@
+[09:49:55-D] Validating Midway Session
+[09:49:55-D] Setting the timeout of the HTTP operations to 30 seconds
+[09:49:55-D] Using RDE version 0.1.201192.0
+[09:49:55-E] unable to retrieve the RDE definition
+Details:
+	unable to find the Config file

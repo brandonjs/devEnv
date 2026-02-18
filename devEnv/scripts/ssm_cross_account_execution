@@ -1,0 +1,31 @@
+#!/bin/bash
+
+aws --profile bsschwar ssm start-automation-execution \
+  --document-name "FalconDemoTest" \
+  --parameters '{"BarristerCCSRegion": ["us-east-1"], "BarristerConsensusReviewID": ["8424d556-47e9-4644-9def-60430d27d1b8"], "BarristerCreateReview": ["No"], "BarristerResources": ["{\"name\": \"DEV-DSK-BSSCHWAR\", \"type\": \"hostclass\"}", "{\"wrongname\": \"BARRISTER-CANARY-PROD-IAD\", \"type\": \"hostclass\"}"], "AutomationAssumeRole": ["arn:aws:iam::971593487406:role/VariaSsmAdministratorRole"], "Targets": ["{\"Key\": \"tag:Hostclass\", \"Values\": [\"DEV-DSK-BSSCHWAR-1D\", \"BARRISTER-CANARY-BETA-IAD\", \"MY-EC2-INSTANCE\",\"CACHE-REFRESHER-DJS-BETA-IAD\"]}"]}' \
+  --document-version "\$DEFAULT" \
+  --target-locations '[{"Accounts":["722816581090", "971593487406"],"Regions":["us-east-1"],"TargetLocationMaxErrors":"10%","TargetLocationMaxConcurrency":"100%","ExecutionRoleName":"VariaSsmExecutorRole"}]' \
+  --region us-east-1
+#  --targets '[{"Key":"tag:Hostclass","Values":["CCS-CACHE-REFRESHER-DJS-BETA-IAD"]}]' \
+#  --document-name "TestAutomation" \
+#  --parameters '{"BarristerCCSRegion":["us-east-1"],"BarristerConsensusReviewID":["8424d556-47e9-4644-9def-60430d27d1b8"],"BarristerCreateReview":["No"],"BarristerResourceName":["DEV-DSK-BSSCHWAR"],"BarristerResourceType":["hostclass"],"AutomationAssumeRole":["arn:aws:iam::971593487406:role/AWS-SystemsManager-AutomationAdministrationRole"]}' \
+
+#  --document-name "SSMDemoEnvironment" \
+#  --parameters '{"BarristerCCSRegion":["us-east-1"],"BarristerConsensusReviewID":["8424d556-47e9-4644-9def-60430d27d1b8"],"BarristerCreateReview":["No"],"BarristerResourceName":["DEV-DSK-BSSCHWAR"],"BarristerResourceType":["hostclass"],"status":["Active"],"environment":["Test Environment"]}' \
+#   --targets '[{"Key":"ResourceGroup","Values":["BsschwarTestGroup"]}]' \
+#  --target-parameter-name InstanceIds \
+#  --max-errors "10%" \
+#  --max-concurrency "100%" \
+
+#  --parameters '{"BarristerCCSRegion": ["us-east-1"], "BarristerConsensusReviewID": ["8424d556-47e9-4644-9def-60430d27d1b8"], "BarristerCreateReview": ["No"], "BarristerResourceName": ["DEV-DSK-BSSCHWAR"], "BarristerResourceType": ["hostclass"], "status": ["Active"], "environment": ["Test Environment"], "AutomationAssumeRole": ["arn:aws:iam::971593487406:role/AWS-SystemsManager-AutomationAdministrationRole"], "Targets": ["{\"Key\": \"tag:Hostclass\", \"Values\": [\"DEV-DSK-BSSCHWAR-1D\", \"BARRISTER-CANARY-GAMMA-IAD\", \"MY-EC2-INSTANCE\",\"CCS-CACHE-REFRESHER-DJS-BETA-IAD\"]}"]}' \
+
+
+#  --parameters '{"BarristerCCSRegion": ["us-east-1"], "BarristerConsensusReviewID": ["8424d556-47e9-4644-9def-60430d27d1b8"], "BarristerCreateReview": ["No"], "BarristerResourceName": ["DEV-DSK-BSSCHWAR"], "BarristerResourceType": ["hostclass"], "BarristerIsProdResources": [{"name": "DEV-DSK-BSSCHWAR", type: "hostclass"}, {"name": "BARRISTER_CANARY-BETA-IAD", "type": "hostclass"}], "AutomationAssumeRole": ["arn:aws:iam::971593487406:role/VariaSsmAdministratorRole"], "Targets": ["{\"Key\": \"tag:Hostclass\", \"Values\": [\"DEV-DSK-BSSCHWAR-1D\", \"BARRISTER-CANARY-BETA-IAD\", \"MY-EC2-INSTANCE\",\"CCS-CACHE-REFRESHER-DJS-BETA-IAD\"]}"]}' \
+
+aws --profile bsschwar ssm start-automation-execution --document-name "uname" --document-version "\$DEFAULT" --parameters '{"AutomationAssumeRole":["arn:aws:iam::971593487406:role/VariaSsmExecutorRole"],"BarristerCCSRegion":["us-east-1"],"BarristerConsensusReviewID":["8424d556-47e9-4644-9def-60430d27d1b8"],"BarristerCreateReview":["No"],"BarristerResources":["{}"],"Username":["root"],"Targets":["{\"Key\": \"InstanceIds\", \"Values\": [\"i-0467d07452fcb5501\"]}"]}' --region us-east-1
+
+
+
+
+aws --profile aws_varia_pipeline ssm start-automation-execution --document-name "uname" --document-version "\$DEFAULT" --parameters '{"AutomationAssumeRole":["arn:aws:iam::399854082722:role/VariaSsmExecutorRole"],"BarristerCCSRegion":["us-east-1"],"BarristerConsensusReviewID":[""],"BarristerResources":["{}"],"Username":["root"],"Targets":["{\"Key\": \"InstanceIds\",\"Values\": [\"i-0d214f2a184081204\"]}"]}' --region us-east-1
+

@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =5
+let g:netrw_dirhist_5='/Volumes/Unix/workplace/PasticheIngestion/src/PasticheIngestionAPI/build'
+let g:netrw_dirhist_4='/Volumes/Unix/workplace/PasticheDataCollector/src/PasticheDataCollectorCDK/lib/stacks/replication'
+let g:netrw_dirhist_3='/Volumes/Unix/workplace/PasticheDataCollector/src/PasticheDataCollectorLambda/configuration'
+let g:netrw_dirhist_2='/Volumes/Unix/workplace/ManagedAlignments/build/ManagedAlignmentsCdk/ManagedAlignmentsCdk-1.0/AL2_aarch64/DEV.STD.PTHREAD/build'
+let g:netrw_dirhist_1='/Volumes/Unix/workplace/PasticheDataCollector/src/PasticheDataCollector/configuration'
+let g:netrw_dirhist_0='/Volumes/Unix/workplace/PasticheManagement/src/PasticheCommonCDK/lib/constants'
+let g:netrw_dirhist_9='/Users/bsschwar/Downloads/2025-01-29 10_39_30'
+let g:netrw_dirhist_8='/Volumes/Unix/workplace/PasticheIngestion/src/PasticheReplicationHandlers'
+let g:netrw_dirhist_7='/Volumes/Unix/workplace/PasticheIngestion/build/PasticheIngestionAPICDK/PasticheIngestionAPICDK-1.0/AL2_aarch64/DEV.STD.PTHREAD/build'
+let g:netrw_dirhist_6='/Volumes/Unix/workplace/PasticheIngestion/src/PasticheIngestionAPI/build'

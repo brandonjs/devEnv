@@ -1,0 +1,3 @@
+#!/bin/bash
+
+aws --profile bsschwar ssm start-automation-execution --document-name "Wrapped_test" --document-version "\$DEFAULT" --parameters '{"BarristerCCSRegion":["us-east-1"],"BarristerConsensusReviewID":["8424d556-47e9-4644-9def-60430d27d1b8"],"BarristerCreateReview":["No"],"BarristerResourceName":["DEV-DSK-BSSCHWAR"],"BarristerResourceType":["hostclass"],"status":["Active"],"environment":["Test Environment"],"InstanceIds":["mi-09e915b20aaa5cc0c", "i-0e1f80c85bdf29de7"]}' --region us-east-1

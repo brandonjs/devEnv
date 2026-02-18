@@ -1,0 +1,13 @@
+#!/usr/local/bin/perl -w
+my $netgfile = "netgrouppwlist";
+open (NETGLIST, "$netgfile") || die ("Can't open $netgfile : $!");
+my @empnos = <NETGLIST>;
+close (NETGLIST);
+foreach my $empno (@empnos)
+{
+    chomp $empno; #removing the leading whitespaces
+    if (my $output = `grep -w $empno auto.home`) {
+        chomp $output;
+        print "$output\n";
+    }
+}

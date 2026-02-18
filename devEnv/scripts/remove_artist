@@ -1,0 +1,24 @@
+#!/bin/bash
+
+for j in *
+do
+	cd "$j"
+	for k in *
+	do
+		if [ -d "$k" ]
+		then
+			cd "$k"
+			for m in *
+			do
+				for i in *.mp3; do X=`echo "$i" | awk -F "- " '{print $2}'`; mv "$i" "$X"; done
+			#	echo "$m"
+			done
+			cd ..
+		else
+			#echo "$k"
+			for i in *.mp3; do X=`echo "$i" | awk -F "- " '{print $2}'`; mv "$i" "$X"; done
+		fi
+	done
+
+	cd ..
+done
